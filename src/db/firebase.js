@@ -91,6 +91,15 @@ export function splitProductPayload(product) {
     seller: product.seller || product.shop || null,
     category: product.category || product.category_breadcrumb || null,
     lastSeenAt: nowIso(),
+    // Campos denormalizados pro dashboard ler sem subcollection
+    lastViralScore: product.viralScore ?? null,
+    lastSoldCount: product.soldCount ?? null,
+    lastPrice: salePrice,
+    lastOriginalPrice: originalPrice,
+    lastRating: product.rating ?? null,
+    lastReviewCount: product.reviewCount ?? product.ratingCount ?? null,
+    lastSaleFormatted: priceObj?.saleFormatted ?? null,
+    lastCurrency: currency,
   });
 
   const snapshot = stripUndefined({

@@ -1,62 +1,78 @@
 import {
   collection,
-  collectionGroup,
   doc,
   getDoc,
   getDocs,
   limit,
   orderBy,
   query,
-  where,
 } from 'firebase/firestore';
 import { db } from './firebase';
 
-/** Retorna os N produtos mais recentemente vistos, ordenados por lastSeenAt. */
-export async function fetchRecentProducts(topN = 50) {
-  if (!db) return [];
-  const q = query(collection(db, 'products'), orderBy('lastSeenAt', 'desc'), limit(topN));
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+function mapProduct(docSnap, last = {}) {
+  const data = typeof docSnap.data === 'function' ? docSnap.data() : docSnap;
+  const id = docSnap.id || data.productId || data.id;
+  const p = { id, ...data };
+  return {
+    ...p,
+    viralScore: last.viralScore ?? p.lastViralScore ?? p.viralScore ?? 0,
+    soldCount: last.soldCount ?? p.lastSoldCount ?? p.soldCount ?? null,
+    price: last.price ?? p.lastPrice ?? null,
+    rating: last.rating ?? p.lastRating ?? p.rating ?? null,
+    reviewCount: last.reviewCount ?? p.lastReviewCount ?? p.reviewCount ?? null,
+    saleFormatted: last.saleFormatted ?? p.lastSaleFormatted ?? null,
+    currency: last.currency ?? p.lastCurrency ?? 'R$',
+  };
 }
 
-/**
- * Retorna produtos + último snapshot (para ordenar por viralScore/soldCount).
- * Faz N+1 reads — usar limit baixo (30 já basta pra dashboard).
- */
+/** Retorna os N produtos mais recentemente vistos. */
+export async function fetchRecentProducts(topN = 50) {
+  if (!db) return [];
+
+  try {
+    const q = query(collection(db, 'products'), orderBy('lastSeenAt', 'desc'), limit(topN));
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => mapProduct(d));
+  } catch {
+    const snap = await getDocs(query(collection(db, 'products'), limit(topN)));
+    return snap.docs.map((d) => mapProduct(d));
+  }
+}
+
+/** Produtos + último snapshot (fallback nos campos denormalizados do doc). */
 export async function fetchTopViral(topN = 30) {
   if (!db) return [];
-  const products = await fetchRecentProducts(topN * 2);
 
-  const withSnapshots = await Promise.all(
+  let products = await fetchRecentProducts(topN * 2);
+  if (!products.length) {
+    const snap = await getDocs(query(collection(db, 'products'), limit(topN * 2)));
+    products = snap.docs.map((d) => mapProduct(d));
+  }
+
+  const enriched = await Promise.all(
     products.map(async (p) => {
-      const snapsQ = query(
-        collection(db, 'products', p.id, 'snapshots'),
-        orderBy('capturedAt', 'desc'),
-        limit(1)
-      );
-      const snapsSnap = await getDocs(snapsQ);
-      const last = snapsSnap.docs[0]?.data() || {};
-      return {
-        ...p,
-        lastSnapshot: last,
-        viralScore: last.viralScore ?? 0,
-        soldCount: last.soldCount ?? null,
-        price: last.price ?? null,
-        rating: last.rating ?? null,
-        reviewCount: last.reviewCount ?? null,
-        saleFormatted: last.saleFormatted ?? null,
-        currency: last.currency ?? 'R$',
-      };
+      try {
+        const snapsSnap = await getDocs(
+          query(
+            collection(db, 'products', p.id, 'snapshots'),
+            orderBy('capturedAt', 'desc'),
+            limit(1)
+          )
+        );
+        const last = snapsSnap.docs[0]?.data() || {};
+        return mapProduct(p, last);
+      } catch {
+        return p;
+      }
     })
   );
 
-  return withSnapshots
-    .filter((p) => p.viralScore > 0 || p.soldCount != null)
+  return enriched
     .sort((a, b) => (b.viralScore || 0) - (a.viralScore || 0))
     .slice(0, topN);
 }
 
-/** Detalhes de UM produto + histórico diário. */
+/** Detalhes de UM produto + histórico. */
 export async function fetchProductDetail(productId) {
   if (!db) return null;
   const pRef = doc(db, 'products', productId);
@@ -66,10 +82,10 @@ export async function fetchProductDetail(productId) {
   const [snapshotsSnap, dailySnap] = await Promise.all([
     getDocs(
       query(collection(db, 'products', productId, 'snapshots'), orderBy('capturedAt', 'desc'), limit(60))
-    ),
+    ).catch(() => ({ docs: [] })),
     getDocs(
       query(collection(db, 'products', productId, 'daily'), orderBy('date', 'desc'), limit(30))
-    ),
+    ).catch(() => ({ docs: [] })),
   ]);
 
   return {
@@ -83,9 +99,14 @@ export async function fetchProductDetail(productId) {
 /** Últimas N runs. */
 export async function fetchRecentRuns(n = 10) {
   if (!db) return [];
-  const q = query(collection(db, 'runs'), orderBy('startedAt', 'desc'), limit(n));
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  try {
+    const q = query(collection(db, 'runs'), orderBy('startedAt', 'desc'), limit(n));
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  } catch {
+    const snap = await getDocs(query(collection(db, 'runs'), limit(n)));
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  }
 }
 
 /** Contagens simples pro topo do dashboard. */
