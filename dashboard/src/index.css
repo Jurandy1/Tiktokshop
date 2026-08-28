@@ -1,0 +1,171 @@
+:root {
+  --bg: #0b0f17;
+  --panel: #131926;
+  --panel-2: #1a2233;
+  --text: #e8ecf3;
+  --muted: #8892a6;
+  --accent: #f43f5e;
+  --accent-2: #22c55e;
+  --border: #232c40;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+header h1 { margin: 0; font-size: 1.4rem; }
+header h1 a { color: var(--text); }
+.header-right { display: flex; gap: 12px; align-items: center; }
+
+.loading { padding: 60px; text-align: center; color: var(--muted); }
+
+.error-box {
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 12px 0;
+}
+
+.muted { color: var(--muted); }
+.small { font-size: 0.85rem; }
+.strong { color: var(--accent); font-weight: 600; }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.stat {
+  background: var(--panel);
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.stat .label { color: var(--muted); font-size: 0.85rem; }
+.stat .value { font-size: 1.6rem; font-weight: 600; margin-top: 4px; }
+
+.card {
+  background: var(--panel);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.card h2 { margin: 0 0 16px; font-size: 1.1rem; }
+.card h3 { margin: 0 0 12px; font-size: 1rem; }
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.table th, .table td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.table th { color: var(--muted); font-weight: 500; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
+.table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.table .rank { color: var(--muted); font-variant-numeric: tabular-nums; }
+.table tr:hover td { background: var(--panel-2); }
+
+.btn {
+  background: var(--accent);
+  color: white;
+  border: 0;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn.ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+
+.pdetail { display: flex; gap: 20px; align-items: flex-start; }
+.pimg { width: 160px; height: 160px; object-fit: cover; border-radius: 8px; }
+
+.stats-inline {
+  display: flex;
+  gap: 20px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.stats-inline .label { color: var(--muted); font-size: 0.75rem; display: block; }
+
+.spark {
+  background: var(--panel-2);
+  border-radius: 6px;
+  padding: 8px;
+  width: 100%;
+  height: auto;
+}
+
+/* Login */
+.login-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.login-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.login-card h1 { margin: 0 0 4px; }
+.login-card label { color: var(--muted); font-size: 0.85rem; margin-top: 8px; }
+.login-card input {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+.login-card button { margin-top: 16px; }
+
+code {
+  background: var(--panel-2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}

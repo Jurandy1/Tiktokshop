@@ -1,0 +1,42 @@
+{
+  "name": "puxar-dados-tiktok",
+  "version": "0.1.0",
+  "description": "Extrator interno de dados do TikTok e TikTok Shop",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test:shop": "node src/test-shop.js",
+    "test:shop:visible": "node src/test-shop.js --visible",
+    "test:shop:cdp": "node src/test-shop.js --cdp",
+    "test:discover": "node src/test-discover.js --cdp",
+    "test:discover:search": "node src/test-discover.js --cdp --source search --query achadinhos",
+    "test:videos": "node src/test-videos.js --cdp",
+    "test:videos:enrich": "node src/test-videos.js --cdp --enrich 5",
+    "test:videos:shop": "node src/test-videos.js --cdp --hashtags tiktokshop,achadinhos --limit 50 --enrich 3",
+    "sync:viral": "node src/sync-most-viral.js --cdp --hashtags tiktokshop,achadinhos --require-product --enrich 1",
+    "sync:viral:save": "node src/sync-most-viral.js --cdp --hashtags tiktokshop,achadinhos --require-product --enrich 1 --save",
+    "sync:popular": "node src/sync-most-viral.js --cdp --hashtags tiktokshop,achadinhos --require-product --enrich 1",
+    "sync:popular:enrich": "node src/sync-most-viral.js --cdp --require-product --enrich 3 --save",
+    "save-cookies": "node src/save-cookies.js",
+    "collect:content": "node src/index.js content",
+    "collect:products": "node src/index.js products --playwright",
+    "pipeline": "node src/index.js pipeline --no-db",
+    "sc:test": "node scripts/test-scrapecreators.js",
+    "sc:probe": "node src/collectors/scrapecreators-probe.js",
+    "map:endpoints": "node scripts/auto-mapear-endpoints.js",
+    "map:endpoints:visible": "node scripts/auto-mapear-endpoints.js --visible",
+    "sync:v2": "node src/sync-viral-v2.js",
+    "sync:v2:save": "node src/sync-viral-v2.js --save",
+    "sync:v2:full": "node src/sync-viral-v2.js --enrich 5 --save"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.7",
+    "firebase-admin": "^12.7.0",
+    "@supabase/supabase-js": "^2.49.1",
+    "playwright": "^1.51.0"
+  }
+}

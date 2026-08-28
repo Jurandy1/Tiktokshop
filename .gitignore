@@ -1,0 +1,23 @@
+node_modules/
+dashboard/node_modules/
+dashboard/dist/
+dashboard/.env
+.env
+.env.local
+dist/
+output/
+cookies/
+*.log
+.playwright/
+
+# Credenciais — NUNCA commitar
+serviceAccountKey.json
+**/serviceAccountKey.json
+*.pem
+*.key
+firebase-adminsdk-*.json
+
+# Firebase local
+.firebase/
+firebase-debug.log
+firestore-debug.log

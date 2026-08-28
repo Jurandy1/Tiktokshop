@@ -1,0 +1,12 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Só o dono consegue ler. Escritas só via admin SDK (bypassa rules).
+    match /{document=**} {
+      allow read: if request.auth != null
+                  && request.auth.token.email == 'gorilaalbino1996@gmail.com';
+      allow write: if false;
+    }
+  }
+}
