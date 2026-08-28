@@ -16,6 +16,9 @@ serviceAccountKey.json
 *.pem
 *.key
 firebase-adminsdk-*.json
+*firebase-adminsdk*.json
+*-adminsdk-*.json
+*service-account*.json
 
 # Firebase local
 .firebase/

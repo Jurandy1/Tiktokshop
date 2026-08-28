@@ -1,27 +1,4 @@
 {
-  "indexes": [
-    {
-      "collectionGroup": "products",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "lastSeenAt", "order": "DESCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "snapshots",
-      "queryScope": "COLLECTION_GROUP",
-      "fields": [
-        { "fieldPath": "capturedAt", "order": "DESCENDING" },
-        { "fieldPath": "viralScore", "order": "DESCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "runs",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "startedAt", "order": "DESCENDING" }
-      ]
-    }
-  ],
+  "indexes": [],
   "fieldOverrides": []
 }

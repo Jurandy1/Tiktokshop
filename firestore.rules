@@ -2,10 +2,24 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Só o dono consegue ler. Escritas só via admin SDK (bypassa rules).
+    // Só o dono lê tudo. Escritas só via admin SDK (bypassa rules) — exceto
+    // `scrape_requests`, que o dashboard cria pra pedir uma coleta ao watcher local.
+    function isOwner() {
+      return request.auth != null
+             && request.auth.token.email == 'gorilaalbino1996@gmail.com';
+    }
+
+    match /scrape_requests/{reqId} {
+      allow read: if isOwner();
+      allow create: if isOwner()
+                    && request.resource.data.status == 'pending'
+                    && request.resource.data.requestedBy == request.auth.token.email;
+      // Update só do watcher (admin SDK bypassa) — dashboard não pode marcar done.
+      allow update, delete: if false;
+    }
+
     match /{document=**} {
-      allow read: if request.auth != null
-                  && request.auth.token.email == 'gorilaalbino1996@gmail.com';
+      allow read: if isOwner();
       allow write: if false;
     }
   }
