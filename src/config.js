@@ -27,8 +27,8 @@ export const config = {
   firebase: {
     serviceAccountPath:
       process.env.FIREBASE_SERVICE_ACCOUNT_PATH ||
-      (existsSync('c:\\Users\\PC\\Desktop\\Afiliadoteste-main\\functions\\serviceAccountKey.json')
-        ? 'c:\\Users\\PC\\Desktop\\Afiliadoteste-main\\functions\\serviceAccountKey.json'
+      (existsSync(join(__dirname, '../serviceAccountKey.json'))
+        ? join(__dirname, '../serviceAccountKey.json')
         : null),
     collection: process.env.FIREBASE_TIKTOK_COLLECTION || 'tiktok_shop_products',
     runsCollection: process.env.FIREBASE_TIKTOK_RUNS_COLLECTION || 'tiktok_discovery_runs',

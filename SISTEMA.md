@@ -19,7 +19,7 @@ Você → npm run sync:v2:full  ←  no PC, quando quiser coletar
         ├─ Chrome debug 9222 (enriquece top N)
         └─ firestore write (products/snapshots/daily)
 
-Você → https://projetoafiliado-9ff07.web.app  ←  ver os dados no navegador
+Você → https://tiktokshop-cb657.web.app  ←  ver os dados no navegador
 ```
 
 ## Setup one-shot (fazer 1x)
@@ -39,8 +39,8 @@ Copiar de `dashboard/.env.example` e colar os valores reais:
 
 ```
 VITE_FIREBASE_API_KEY=AIzaSy...
-VITE_FIREBASE_AUTH_DOMAIN=projetoafiliado-9ff07.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=projetoafiliado-9ff07
+VITE_FIREBASE_AUTH_DOMAIN=tiktokshop-cb657.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=tiktokshop-cb657
 VITE_FIREBASE_APP_ID=1:...
 VITE_OWNER_EMAIL=gorilaalbino1996@gmail.com
 ```
@@ -95,7 +95,7 @@ npm run sync:v2:full
 npm run sync:v2:save
 ```
 
-**Ver no dashboard:** `https://projetoafiliado-9ff07.web.app`
+**Ver no dashboard:** `https://tiktokshop-cb657.web.app`
 
 **Rodar dashboard local:**
 ```

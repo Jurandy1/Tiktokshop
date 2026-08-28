@@ -18,6 +18,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Verificar secrets obrigatórios
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+          VITE_OWNER_EMAIL: ${{ secrets.VITE_OWNER_EMAIL }}
+        run: |
+          missing=0
+          check() { if [ -z "${!1}" ]; then echo "❌ Secret ausente: $1"; missing=1; else echo "✅ $1"; fi; }
+          check FIREBASE_SERVICE_ACCOUNT
+          check VITE_FIREBASE_API_KEY
+          check VITE_FIREBASE_AUTH_DOMAIN
+          check VITE_FIREBASE_PROJECT_ID
+          check VITE_FIREBASE_APP_ID
+          check VITE_OWNER_EMAIL
+          if [ "$missing" -eq 1 ]; then
+            echo ""
+            echo "Configure em: https://github.com/Jurandy1/Tiktokshop/settings/secrets/actions"
+            echo "FIREBASE_SERVICE_ACCOUNT = conteúdo inteiro do JSON da service account"
+            exit 1
+          fi
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -39,9 +63,9 @@ jobs:
         run: npm run build
 
       - name: Deploy to Firebase Hosting
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          channelId: live
-          projectId: projetoafiliado-9ff07
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          echo "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-sa.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/firebase-sa.json"
+          npx firebase-tools@13 deploy --only hosting --project tiktokshop-cb657 --non-interactive
