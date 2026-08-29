@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { isConfigured } from './lib/firebase';
 import { watchAuth, logout } from './lib/auth';
 import LoginGate from './components/LoginGate';
+import Sidebar from './components/Sidebar';
+import Overview from './pages/Overview';
 import Home from './pages/Home';
 import Product from './pages/Product';
 import Videos from './pages/Videos';
+import Lojas from './pages/Lojas';
+import Sistema from './pages/Sistema';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -35,23 +39,18 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <div className="app">
-        <header>
-          <h1><Link to="/">TikTok Shop</Link></h1>
-          <nav className="header-nav">
-            <Link to="/">Produtos</Link>
-            <Link to="/videos">Vídeos</Link>
-          </nav>
-          <div className="header-right">
-            <span className="muted small">{user.email}</span>
-            <button className="btn ghost" onClick={logout}>Sair</button>
-          </div>
-        </header>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/product/:id" element={<Product />} />
-          <Route path="/videos" element={<Videos />} />
-        </Routes>
+      <div className="app-shell">
+        <Sidebar userEmail={user.email} onLogout={logout} />
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Overview />} />
+            <Route path="/produtos" element={<Home />} />
+            <Route path="/product/:id" element={<Product />} />
+            <Route path="/videos" element={<Videos />} />
+            <Route path="/lojas" element={<Lojas />} />
+            <Route path="/configuracoes" element={<Sistema />} />
+          </Routes>
+        </main>
       </div>
     </BrowserRouter>
   );

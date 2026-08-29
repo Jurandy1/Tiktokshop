@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fetchProductDetail } from '../lib/products';
+import { fetchVideosByProduct } from '../lib/videos';
+import VideoCard from '../components/VideoCard';
 
 function fmt(n) {
   if (n == null) return '—';
@@ -37,13 +39,16 @@ function Sparkline({ values, width = 500, height = 80, color = '#f43f5e' }) {
 export default function Product() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchProductDetail(id)
-      .then((p) => {
+    setLoading(true);
+    Promise.all([fetchProductDetail(id), fetchVideosByProduct(id)])
+      .then(([p, v]) => {
         setProduct(p);
+        setVideos(v);
         setLoading(false);
       })
       .catch((err) => {
@@ -62,7 +67,7 @@ export default function Product() {
 
   return (
     <>
-      <p><Link to="/">← voltar</Link></p>
+      <p><Link to="/produtos">← voltar</Link></p>
       <div className="card">
         <div className="pdetail">
           {product.image && (
@@ -129,6 +134,19 @@ export default function Product() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="card">
+        <h3>Vídeos relacionados ({videos.length})</h3>
+        {videos.length === 0 ? (
+          <p className="muted">Nenhum vídeo com esse produto vinculado ainda.</p>
+        ) : (
+          <div className="pgrid">
+            {videos.map((v) => (
+              <VideoCard key={v.id} video={v} />
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

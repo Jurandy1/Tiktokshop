@@ -138,6 +138,8 @@ async function correlateWithProducts(videos, firestore) {
       productMatchType: 'explicit',
       productKnown: true,
       productTitle: known?.title || null,
+      productPrice: known?.lastPrice ?? null,
+      productSoldCount: known?.lastSoldCount ?? null,
     };
   });
 }

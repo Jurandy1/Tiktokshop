@@ -6,6 +6,8 @@ import {
   limit,
   orderBy,
   query,
+  Timestamp,
+  where,
 } from 'firebase/firestore';
 import { db } from './firebase';
 
@@ -94,6 +96,66 @@ export async function fetchTopByRating(topN = 30) {
   } catch {
     return [];
   }
+}
+
+/** Top N produtos com pelo menos um vídeo confirmado vinculado (campo hasVideo). */
+export async function fetchProductsWithVideos(topN = 30) {
+  if (!db) return [];
+  try {
+    const q = query(
+      collection(db, 'products'),
+      where('hasVideo', '==', true),
+      orderBy('lastViralScore', 'desc'),
+      limit(topN)
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => mapProduct(d));
+  } catch {
+    return [];
+  }
+}
+
+/** Quantos produtos foram vistos pela primeira vez nas últimas N horas. */
+export async function fetchNewProductsCount(hours = 24) {
+  if (!db) return 0;
+  try {
+    const since = Timestamp.fromDate(new Date(Date.now() - hours * 60 * 60 * 1000));
+    const snap = await getDocs(
+      query(collection(db, 'products'), where('firstSeenAt', '>=', since), limit(1000))
+    );
+    return snap.size;
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * Vendedores distintos agregados a partir dos produtos monitorados.
+ * Não é o total de vendas real da loja no TikTok Shop — é a soma apenas dos
+ * produtos dessa loja que já estão no nosso catálogo.
+ */
+export async function fetchSellers(sampleSize = 1000) {
+  if (!db) return [];
+  const snap = await getDocs(query(collection(db, 'products'), limit(sampleSize)));
+  const bySeller = new Map();
+
+  snap.docs.forEach((d) => {
+    const data = d.data();
+    const seller = data.seller;
+    if (!seller?.id) return;
+    const entry = bySeller.get(seller.id) || {
+      id: seller.id,
+      name: seller.name || seller.id,
+      logo: seller.logo || null,
+      productCount: 0,
+      soldCount: 0,
+    };
+    entry.productCount += 1;
+    entry.soldCount += Number(data.lastSoldCount || 0);
+    bySeller.set(seller.id, entry);
+  });
+
+  return [...bySeller.values()].sort((a, b) => b.soldCount - a.soldCount);
 }
 
 /** Detalhes de UM produto + histórico. */

@@ -15,6 +15,14 @@
         { "fieldPath": "productKnown", "order": "ASCENDING" },
         { "fieldPath": "lastViralScore", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "products",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "hasVideo", "order": "ASCENDING" },
+        { "fieldPath": "lastViralScore", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

@@ -102,6 +102,9 @@ export function normalizeSearchProduct(raw) {
     description: raw.product_description || null,
     image,
     pdpUrl: raw.seo_url?.canonical_url || null,
+    // category_breadcrumb vem preenchido em ~20-25% dos produtos (confirmado
+    // ao vivo contra a API) — formato [{category_id, category_name, level}].
+    category: raw.category_breadcrumb || null,
     price: {
       sale: salePrice,
       original: originalPrice,

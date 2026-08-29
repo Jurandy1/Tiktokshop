@@ -143,12 +143,18 @@ export async function upsertVideoWithSnapshot(video, { runId } = {}) {
   const videoRef = firestore.collection('videos').doc(videoId);
   const snapRef = videoRef.collection('snapshots').doc(snapshotDocId());
 
+  // Precisa saber ANTES do batch se é vídeo novo, pra só incrementar o
+  // contador do produto uma vez (não a cada snapshot repetido do mesmo vídeo).
+  const isNewVideo = !(await videoRef.get()).exists;
+
   const stable = stripUndefined({
     videoId,
     productId: video.productId || null,
     productTitle: video.productTitle || null,
     productKnown: Boolean(video.productKnown),
     productMatchType: video.productMatchType || null,
+    productPrice: video.productPrice ?? null,
+    productSoldCount: video.productSoldCount ?? null,
     author: video.author || null,
     description: video.description || null,
     videoUrl: video.videoUrl || null,
@@ -173,9 +179,25 @@ export async function upsertVideoWithSnapshot(video, { runId } = {}) {
     runId: runId || null,
   });
 
+  // Só marca hasVideo/incrementa videoCount se o produto JÁ existe no nosso
+  // catálogo (coletado via sync de produtos) — nunca cria um doc de produto
+  // "coto" (só com hasVideo, sem título/preço/etc) pra produtos que a gente
+  // só conhece através do vídeo.
+  let productExists = false;
+  let productRef = null;
+  if (isNewVideo && video.productId) {
+    productRef = firestore.collection('products').doc(String(video.productId));
+    productExists = (await productRef.get()).exists;
+  }
+
   const batch = firestore.batch();
   batch.set(videoRef, { ...stable, firstSeenAt: FieldValue.serverTimestamp() }, { merge: true });
   batch.set(snapRef, snapshot);
+
+  if (productExists) {
+    batch.set(productRef, { hasVideo: true, videoCount: FieldValue.increment(1) }, { merge: true });
+  }
+
   await batch.commit();
 
   return { videoId, snapshotId: snapRef.id };

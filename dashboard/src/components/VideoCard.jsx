@@ -7,10 +7,16 @@ function fmt(n) {
   return String(n);
 }
 
+function fmtPrice(video) {
+  if (video.productPrice == null) return null;
+  return `R$ ${video.productPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
 const PLACEHOLDER = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%231a2233"/><text x="50" y="55" font-size="10" fill="%23555" text-anchor="middle">sem capa</text></svg>';
 
 export default function VideoCard({ video }) {
   const img = video.coverUrl || PLACEHOLDER;
+  const price = fmtPrice(video);
 
   return (
     <a href={video.videoUrl || '#'} target="_blank" rel="noreferrer" className="pcard">
@@ -24,9 +30,9 @@ export default function VideoCard({ video }) {
           referrerPolicy="no-referrer"
         />
         {video.lastViralScore > 0 && (
-          <span className="pcard-viral">🔥 {fmt(video.lastViralScore)}</span>
+          <span className="pcard-viral">{fmt(video.lastViralScore)}</span>
         )}
-        {video.productKnown && <span className="pcard-rank">🛒</span>}
+        {video.productKnown && <span className="pcard-rank">Produto</span>}
       </div>
 
       <div className="pcard-body">
@@ -47,9 +53,17 @@ export default function VideoCard({ video }) {
           <div className="muted small">Sem produto identificado</div>
         )}
 
+        {(price || video.productSoldCount != null) && (
+          <div className="muted small">
+            {price}
+            {price && video.productSoldCount != null ? ' · ' : ''}
+            {video.productSoldCount != null ? `${fmt(video.productSoldCount)} vendidos` : ''}
+          </div>
+        )}
+
         <div className="pcard-meta">
           <span className="pcard-sold">{fmt(video.lastPlayCount)} views</span>
-          <span className="pcard-rating">❤️ {fmt(video.lastLikeCount)}</span>
+          <span className="pcard-rating">{fmt(video.lastLikeCount)} curtidas</span>
         </div>
       </div>
     </a>

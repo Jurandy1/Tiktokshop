@@ -19,6 +19,13 @@ export async function fetchRecentVideos(topN = 60) {
   }
 }
 
+/** Contagem de vídeos salvos — todos já têm produto confirmado (regra da coleta). */
+export async function fetchVideoCount() {
+  if (!db) return 0;
+  const snap = await getDocs(query(collection(db, 'videos'), limit(1000)));
+  return snap.size;
+}
+
 /** Vídeos com produto confirmado, ordenados pelos mais virais. */
 export async function fetchTopViralVideos(topN = 60) {
   if (!db) return [];

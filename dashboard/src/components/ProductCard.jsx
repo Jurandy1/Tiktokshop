@@ -33,7 +33,7 @@ export default function ProductCard({ product, rank }) {
         />
         {rank != null && <span className="pcard-rank">#{rank}</span>}
         {product.viralScore > 0 && (
-          <span className="pcard-viral">🔥 {fmt(product.viralScore)}</span>
+          <span className="pcard-viral">{fmt(product.viralScore)}</span>
         )}
       </div>
 
@@ -47,7 +47,7 @@ export default function ProductCard({ product, rank }) {
           <span className="pcard-sold">{fmt(product.soldCount)} vendidos</span>
           {rating && (
             <span className="pcard-rating">
-              ⭐ {rating} {reviews ? <span className="muted small">({fmt(reviews)})</span> : null}
+              ★ {rating} {reviews ? <span className="muted small">({fmt(reviews)})</span> : null}
             </span>
           )}
         </div>

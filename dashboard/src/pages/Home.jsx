@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { fetchTopViral, fetchCounts, fetchRecentRuns } from '../lib/products';
+import {
+  fetchTopViral,
+  fetchTopBySold,
+  fetchTopByRating,
+  fetchProductsWithVideos,
+  fetchCounts,
+  fetchRecentRuns,
+} from '../lib/products';
 import { requestScrape, watchRecentRequests, watchRequest } from '../lib/scrape-requests';
 import ProductCard from '../components/ProductCard';
 
@@ -14,6 +21,21 @@ function statusColor(s) {
   return s === 'done' ? 'ok' : s === 'running' ? 'warn' : s === 'error' ? 'err' : 'muted';
 }
 
+// Cada modo é um fetch server-side já pronto — nada de re-ordenar client-side
+// sobre uma janela pequena (isso não era um top-N de verdade).
+const MODE_FETCHERS = {
+  viral: fetchTopViral,
+  sold: fetchTopBySold,
+  rating: fetchTopByRating,
+  withVideos: fetchProductsWithVideos,
+};
+
+/** category_breadcrumb vem como [{category_id, category_name, level}], nível 1 = mais amplo. */
+function categoryLabel(product) {
+  const cat = Array.isArray(product.category) ? product.category[0] : null;
+  return cat?.category_name || null;
+}
+
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [counts, setCounts] = useState({ products: 0, runs: 0 });
@@ -22,8 +44,10 @@ export default function Home() {
   const [error, setError] = useState(null);
 
   const [search, setSearch] = useState('');
-  const [sortBy, setSortBy] = useState('viral'); // viral | sold | rating | price
+  const [mode, setMode] = useState('viral'); // viral | sold | rating | withVideos
   const [minSold, setMinSold] = useState(0);
+  const [minRating, setMinRating] = useState(0);
+  const [category, setCategory] = useState('');
 
   const [requests, setRequests] = useState([]);
   const [queueQueries, setQueueQueries] = useState('achadinhos,tiktokshop');
@@ -37,8 +61,9 @@ export default function Home() {
   async function load() {
     setLoading(true);
     try {
+      const fetcher = MODE_FETCHERS[mode] || fetchTopViral;
       const [tv, c, r] = await Promise.all([
-        fetchTopViral(60),
+        fetcher(60),
         fetchCounts(),
         fetchRecentRuns(5),
       ]);
@@ -62,6 +87,10 @@ export default function Home() {
 
   useEffect(() => {
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode]);
+
+  useEffect(() => {
     const unsub = watchRecentRequests((docs) => setRequests(docs));
     return () => unsub();
   }, []);
@@ -86,12 +115,21 @@ export default function Home() {
     return () => unsub();
   }, [pendingRequest]);
 
+  // Categorias disponíveis na janela atual carregada — só as que existem de
+  // verdade nesse lote (category_breadcrumb vem em ~20-25% dos produtos).
+  const categories = useMemo(() => {
+    const set = new Set(products.map(categoryLabel).filter(Boolean));
+    return [...set].sort();
+  }, [products]);
+
   const filtered = useMemo(() => {
     const terms = search
       .split(',')
       .map((s) => s.trim().toLowerCase())
       .filter(Boolean);
-    let out = products.filter((p) => (p.soldCount ?? 0) >= minSold);
+    let out = products.filter(
+      (p) => (p.soldCount ?? 0) >= minSold && (p.rating ?? 0) >= minRating
+    );
     if (terms.length) {
       out = out.filter((p) => {
         const title = (p.title || '').toLowerCase();
@@ -99,13 +137,13 @@ export default function Home() {
         return terms.some((t) => title.includes(t) || seller.includes(t));
       });
     }
-    out.sort((a, b) => {
-      const va = a[sortBy === 'viral' ? 'viralScore' : sortBy === 'sold' ? 'soldCount' : sortBy === 'rating' ? 'rating' : 'price'] || 0;
-      const vb = b[sortBy === 'viral' ? 'viralScore' : sortBy === 'sold' ? 'soldCount' : sortBy === 'rating' ? 'rating' : 'price'] || 0;
-      return sortBy === 'price' ? va - vb : vb - va;
-    });
+    if (category === '__none__') {
+      out = out.filter((p) => !categoryLabel(p));
+    } else if (category) {
+      out = out.filter((p) => categoryLabel(p) === category);
+    }
     return out;
-  }, [products, search, sortBy, minSold]);
+  }, [products, search, minSold, minRating, category]);
 
   async function onQueue() {
     setQueueBusy(true);
@@ -199,6 +237,13 @@ export default function Home() {
       </div>
 
       <div className="card">
+        <div className="mode-tabs">
+          <button className={mode === 'viral' ? 'active' : ''} onClick={() => setMode('viral')}>Em alta</button>
+          <button className={mode === 'sold' ? 'active' : ''} onClick={() => setMode('sold')}>Mais vendidos</button>
+          <button className={mode === 'rating' ? 'active' : ''} onClick={() => setMode('rating')}>Melhores avaliados</button>
+          <button className={mode === 'withVideos' ? 'active' : ''} onClick={() => setMode('withVideos')}>Com vídeos virais</button>
+        </div>
+
         <div className="filters">
           <input
             type="text"
@@ -209,12 +254,13 @@ export default function Home() {
           />
 
           <div className="filter-group">
-            <label>Ordenar por</label>
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-              <option value="viral">Viral score</option>
-              <option value="sold">Mais vendidos</option>
-              <option value="rating">Melhor avaliados</option>
-              <option value="price">Menor preço</option>
+            <label>Categoria</label>
+            <select value={category} onChange={(e) => setCategory(e.target.value)}>
+              <option value="">Todas</option>
+              {categories.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+              <option value="__none__">Sem categoria</option>
             </select>
           </div>
 
@@ -225,6 +271,19 @@ export default function Home() {
               min="0"
               value={minSold}
               onChange={(e) => setMinSold(Number(e.target.value) || 0)}
+              className="narrow"
+            />
+          </div>
+
+          <div className="filter-group">
+            <label>Mín. avaliação</label>
+            <input
+              type="number"
+              min="0"
+              max="5"
+              step="0.1"
+              value={minRating}
+              onChange={(e) => setMinRating(Number(e.target.value) || 0)}
               className="narrow"
             />
           </div>

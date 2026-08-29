@@ -4,8 +4,11 @@
   --panel-2: #1a2233;
   --text: #e8ecf3;
   --muted: #8892a6;
-  --accent: #f43f5e;
-  --accent-2: #22c55e;
+  /* Cores de acento: só pra estado/ação pontual (botão primário, indicador de
+     status, erro) — não pra elementos grandes/dominantes do layout. Saturação
+     reduzida em relação ao rosa/verde vibrantes originais. */
+  --accent: #c14a5c;
+  --accent-2: #3f9d68;
   --border: #232c40;
 }
 
@@ -22,26 +25,61 @@ body {
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-.app {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px;
+.app-shell {
+  display: flex;
+  min-height: 100vh;
 }
 
-header {
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border);
+  flex-direction: column;
+  padding: 20px 0;
 }
-header h1 { margin: 0; font-size: 1.4rem; }
-header h1 a { color: var(--text); }
-.header-right { display: flex; gap: 12px; align-items: center; }
-.header-nav { display: flex; gap: 16px; }
-.header-nav a { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
-.header-nav a:hover { color: var(--text); }
+.sidebar-brand {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.sidebar-brand a {
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  padding: 0 12px;
+}
+.sidebar-nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: 9px 12px;
+  border-radius: 8px;
+}
+.sidebar-nav a:hover { color: var(--text); background: var(--panel-2); }
+.sidebar-nav a.active { color: var(--text); background: var(--panel-2); font-weight: 500; }
+.sidebar-footer {
+  padding: 16px 20px 0;
+  border-top: 1px solid var(--border);
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+  max-width: 1200px;
+  padding: 24px 32px;
+}
 
 .loading { padding: 60px; text-align: center; color: var(--muted); }
 
@@ -82,6 +120,14 @@ header h1 a { color: var(--text); }
 .card h2 { margin: 0 0 16px; font-size: 1.1rem; }
 .card h3 { margin: 0 0 12px; font-size: 1rem; }
 
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+.section-head h2 { margin: 0; }
+
 .grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -103,6 +149,16 @@ header h1 a { color: var(--text); }
 .table .num { text-align: right; font-variant-numeric: tabular-nums; }
 .table .rank { color: var(--muted); font-variant-numeric: tabular-nums; }
 .table tr:hover td { background: var(--panel-2); }
+
+.seller-row { display: flex; align-items: center; gap: 10px; }
+.seller-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: var(--bg);
+  flex-shrink: 0;
+}
 
 .btn {
   background: var(--accent);
@@ -194,9 +250,7 @@ code {
   transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
 }
 .pcard:hover {
-  transform: translateY(-2px);
-  border-color: var(--accent);
-  box-shadow: 0 8px 24px rgba(244, 63, 94, 0.15);
+  border-color: var(--muted);
   text-decoration: none;
 }
 
@@ -257,8 +311,8 @@ code {
 }
 .pcard-price {
   font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--accent-2);
+  font-weight: 600;
+  color: var(--text);
   margin-bottom: 6px;
 }
 .pcard-meta {
@@ -275,6 +329,28 @@ code {
 /* ============================================================
    Filtros + search
    ============================================================ */
+
+.mode-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.mode-tabs button {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.mode-tabs button:hover { color: var(--text); }
+.mode-tabs button.active {
+  background: var(--panel-2);
+  color: var(--text);
+  border-color: var(--text);
+}
 
 .filters {
   display: flex;
@@ -373,9 +449,9 @@ code {
   height: 8px;
   border-radius: 50%;
 }
-.dot.ok { background: #22c55e; }
-.dot.warn { background: #fbbf24; box-shadow: 0 0 8px #fbbf24; }
-.dot.err { background: #ef4444; }
+.dot.ok { background: var(--accent-2); }
+.dot.warn { background: #b8912e; }
+.dot.err { background: var(--accent); }
 .dot.muted { background: #6b7280; }
 
 /* botão do stat header */
