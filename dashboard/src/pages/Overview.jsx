@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Sparkles, PlayCircle } from 'lucide-react';
 import { fetchCounts, fetchNewProductsCount, fetchRecentRuns, fetchTopViral } from '../lib/products';
 import { fetchTopViralVideos, fetchVideoCount } from '../lib/videos';
 import ProductCard from '../components/ProductCard';
 import VideoCard from '../components/VideoCard';
+import MetricCard from '../components/MetricCard';
+import SectionHeader from '../components/SectionHeader';
 
 function fmt(n) {
   if (n == null) return '—';
@@ -49,64 +51,59 @@ export default function Overview() {
     })();
   }, []);
 
-  if (loading) return <div className="loading">…</div>;
+  if (loading) {
+    return <div className="text-center py-20 text-tiktok-muted">Carregando…</div>;
+  }
+
+  const lastUpdate = lastRun?.startedAt ? new Date(lastRun.startedAt) : null;
 
   return (
     <>
-      {error && <div className="error-box">{error}</div>}
+      {error && (
+        <div className="bg-tiktok-pink/10 border border-tiktok-pink/30 text-tiktok-pink px-4 py-3 rounded-xl">
+          {error}
+        </div>
+      )}
 
-      <div className="stats">
-        <div className="stat">
-          <div className="label">Produtos monitorados</div>
-          <div className="value">{fmt(counts.products)}</div>
-        </div>
-        <div className="stat">
-          <div className="label">Novos produtos (24h)</div>
-          <div className="value">{fmt(newProducts)}</div>
-        </div>
-        <div className="stat">
-          <div className="label">Vídeos com produto</div>
-          <div className="value">{fmt(videoCount)}</div>
-        </div>
-        <div className="stat">
-          <div className="label">Última atualização</div>
-          <div className="value small">
-            {lastRun?.startedAt ? new Date(lastRun.startedAt).toLocaleString('pt-BR') : '—'}
-          </div>
-        </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <MetricCard label="Produtos monitorados" value={fmt(counts.products)} />
+        <MetricCard label="Novos produtos (24h)" value={fmt(newProducts)} />
+        <MetricCard label="Vídeos com produto" value={fmt(videoCount)} accent="pink" />
+        <MetricCard label="Última atualização">
+          <p className="text-base md:text-lg font-semibold font-mono tracking-tight text-white">
+            {lastUpdate ? lastUpdate.toLocaleDateString('pt-BR') : '—'}
+          </p>
+          <p className="text-xs md:text-sm text-tiktok-muted font-mono">
+            {lastUpdate ? lastUpdate.toLocaleTimeString('pt-BR') : ''}
+          </p>
+        </MetricCard>
       </div>
 
-      <div className="card">
-        <div className="section-head">
-          <h2>Produtos em destaque</h2>
-          <Link to="/produtos" className="muted small">Ver todos →</Link>
-        </div>
+      <section className="space-y-4">
+        <SectionHeader icon={Sparkles} title="Produtos em destaque" to="/produtos" />
         {topProducts.length === 0 ? (
-          <p className="muted">Nenhum produto ainda.</p>
+          <p className="text-tiktok-muted">Nenhum produto ainda.</p>
         ) : (
-          <div className="pgrid">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
             {topProducts.map((p, i) => (
               <ProductCard key={p.id} product={p} rank={i + 1} />
             ))}
           </div>
         )}
-      </div>
+      </section>
 
-      <div className="card">
-        <div className="section-head">
-          <h2>Vídeos em destaque</h2>
-          <Link to="/videos" className="muted small">Ver todos →</Link>
-        </div>
+      <section className="space-y-4 pb-10">
+        <SectionHeader icon={PlayCircle} iconColor="text-tiktok-pink" title="Vídeos em destaque" to="/videos" />
         {topVideos.length === 0 ? (
-          <p className="muted">Nenhum vídeo ainda.</p>
+          <p className="text-tiktok-muted">Nenhum vídeo ainda.</p>
         ) : (
-          <div className="pgrid">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
             {topVideos.map((v) => (
               <VideoCard key={v.id} video={v} />
             ))}
           </div>
         )}
-      </div>
+      </section>
     </>
   );
 }

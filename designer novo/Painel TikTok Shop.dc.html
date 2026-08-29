@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500;6..72,600&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: #FBFAF7; color: #17181A; font-family: Archivo, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: #A8394A; text-decoration: none; }
+  a:hover { color: #17181A; }
+  input, select, button { font-family: inherit; }
+  ::selection { background: #EDE6DC; }
+</style>
+</helmet>
+
+<div style="display:flex;min-height:100vh;background:#FBFAF7;font-family:Archivo,system-ui,sans-serif;color:#17181A">
+
+  <sc-if value="{{ isLogin }}">
+    <div style="flex:1;display:flex;align-items:stretch;min-height:100vh">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between;padding:56px 64px;border-right:1px solid #E5E2DA">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8A8D93">Painel interno</div>
+        <div style="max-width:460px">
+          <h1 style="font-family:Newsreader,serif;font-weight:400;font-size:56px;line-height:1.02;letter-spacing:-0.02em;margin:0 0 20px">TikTok Shop<br />Tendências</h1>
+          <p style="margin:0;font-size:15px;line-height:1.65;color:#5C5F66;max-width:38ch;text-wrap:pretty">Monitoramento de produtos, vídeos virais e lojas. Coleta automática por Cloud Function — nada roda no seu PC.</p>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8A8D93">Acesso restrito ao dono</div>
+      </div>
+      <div style="width:44%;min-width:420px;display:flex;align-items:center;justify-content:center;padding:56px;background:#FFFFFF">
+        <div style="width:100%;max-width:340px">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8A8D93;margin-bottom:28px">Entrar</div>
+          <label style="display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8A8D93;margin-bottom:8px">Email</label>
+          <input type="email" value="gorilaalbino1996@gmail.com" style="width:100%;border:0;border-bottom:1px solid #D9D5CB;background:transparent;padding:9px 0;font-size:14.5px;color:#17181A;outline:none;margin-bottom:26px" />
+          <label style="display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8A8D93;margin-bottom:8px">Senha</label>
+          <input type="password" value="senha-de-teste" style="width:100%;border:0;border-bottom:1px solid #D9D5CB;background:transparent;padding:9px 0;font-size:14.5px;color:#17181A;outline:none;margin-bottom:34px" />
+          <button onClick="{{ enter }}" style="width:100%;border:0;background:#17181A;color:#FBFAF7;padding:13px 0;font-size:13.5px;font-weight:500;letter-spacing:0.02em;cursor:pointer;border-radius:2px" style-hover="background:#A8394A">Entrar</button>
+          <p style="margin:20px 0 0;font-size:12.5px;color:#8A8D93;line-height:1.6">Painel privado — só o dono acessa.</p>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isApp }}" hint-placeholder-val="{{ true }}">
+    <div style="width:236px;flex-shrink:0;border-right:1px solid #E5E2DA;background:#FBFAF7;display:flex;flex-direction:column;padding:34px 0 26px;position:sticky;top:0;height:100vh">
+      <div style="padding:0 26px 26px">
+        <div style="font-family:Newsreader,serif;font-size:21px;font-weight:500;letter-spacing:-0.01em;line-height:1.1">TikTok Shop</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.18em;text-transform:uppercase;color:#9A9C9F;margin-top:6px">Tendências</div>
+      </div>
+      <nav style="display:flex;flex-direction:column;padding:0 26px;flex:1">
+        <sc-for list="{{ nav }}" as="item" hint-placeholder-count="5">
+          <div onClick="{{ item.go }}" style="display:flex;align-items:center;gap:12px;padding:8px 0;cursor:pointer;font-size:13.5px;letter-spacing:0.005em;color:{{ item.color }};font-weight:{{ item.weight }}" style-hover="color:#17181A">
+            <span style="width:16px;height:1px;flex-shrink:0;background:{{ item.mark }}"></span>
+            {{ item.label }}
+          </div>
+        </sc-for>
+      </nav>
+      <div style="padding:22px 26px 0;border-top:1px solid #E5E2DA;display:flex;flex-direction:column;gap:14px">
+        <span style="font-size:11.5px;color:#9A9C9F;word-break:break-all;line-height:1.4">gorilaalbino1996@gmail.com</span>
+        <button onClick="{{ signOut }}" style="border:1px solid #DDD9D0;background:transparent;color:#5C5F66;padding:7px 0;font-size:12px;letter-spacing:0.02em;cursor:pointer;border-radius:2px" style-hover="border-color:#17181A;color:#17181A">Sair</button>
+      </div>
+    </div>
+
+    <main style="flex:1;min-width:0;padding:40px 52px 88px;max-width:1360px">
+
+      <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:32px;padding-bottom:24px;border-bottom:1px solid #17181A">
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#9A9C9F;margin-bottom:10px">Visão geral</div>
+            <h1 style="font-family:Newsreader,serif;font-weight:400;font-size:40px;line-height:1.05;letter-spacing:-0.015em;margin:0">O que está subindo agora</h1>
+          </div>
+          <div style="text-align:right;font-size:12px;color:#8A8D93;line-height:1.5;padding-bottom:4px">Última atualização<br /><span style="font-family:'IBM Plex Mono',monospace;color:#45484D">29/08/2026, 09:45:36</span></div>
+        </header>
+
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #E5E2DA;margin-bottom:52px">
+          <div style="padding:26px 26px 26px 0;border-right:1px solid #E5E2DA">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#9A9C9F;margin-bottom:12px">Produtos monitorados</div>
+            <div style="font-family:Newsreader,serif;font-size:38px;font-weight:400;line-height:1;letter-spacing:-0.02em">235</div>
+          </div>
+          <div style="padding:26px;border-right:1px solid #E5E2DA">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#9A9C9F;margin-bottom:12px">Novos (24h)</div>
+            <div style="font-family:Newsreader,serif;font-size:38px;font-weight:400;line-height:1;letter-spacing:-0.02em">235</div>
+          </div>
+          <div style="padding:26px;border-right:1px solid #E5E2DA">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#9A9C9F;margin-bottom:12px">Vídeos com produto</div>
+            <div style="font-family:Newsreader,serif;font-size:38px;font-weight:400;line-height:1;letter-spacing:-0.02em">15</div>
+          </div>
+          <div style="padding:26px 0 26px 26px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#9A9C9F;margin-bottom:12px">Runs registradas</div>
+            <div style="font-family:Newsreader,serif;font-size:38px;font-weight:400;line-height:1;letter-spacing:-0.02em">13</div>
+          </div>
+        </div>
+
+        <section style="margin-bottom:64px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid #17181A;margin-bottom:30px">
+            <h2 style="font-family:Newsreader,serif;font-weight:400;font-size:24px;letter-spacing:-0.01em;margin:0">Produtos em destaque</h2>
+            <span onClick="{{ goProdutos }}" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:#8A8D93;cursor:pointer" style-hover="color:#A8394A">Ver todos →</span>
+          </div>
+          <div style="display:grid;grid-template-columns:{{ gridCols }};column-gap:26px;row-gap:36px">
+            <sc-for list="{{ topProducts }}" as="p" hint-placeholder-count="8">
+              <div onClick="{{ p.open }}" style="cursor:pointer;display:flex;flex-direction:column;gap:10px" style-hover="opacity:0.78">
+                <div style="position:relative;aspect-ratio:1/1;background:#F1EEE8;display:flex;align-items:center;justify-content:center;overflow:hidden">
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#B4AEA2">foto do produto</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#9A9C9F">
+                  <span>{{ p.rankLabel }}</span>
+                  <span style="color:#A8394A">{{ p.viralLabel }}</span>
+                </div>
+                <div style="font-size:13px;line-height:1.4;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.8em;text-wrap:pretty">{{ p.title }}</div>
+                <div style="font-size:11.5px;color:#9A9C9F;margin-top:-4px">{{ p.seller }}</div>
+                <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;border-top:1px solid #E5E2DA;padding-top:9px">
+                  <span style="font-family:Newsreader,serif;font-size:17px;font-weight:500;letter-spacing:-0.01em;white-space:nowrap">{{ p.priceLabel }}</span>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8A8D93;white-space:nowrap">{{ p.soldLabel }} · {{ p.ratingLabel }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid #17181A;margin-bottom:30px">
+            <h2 style="font-family:Newsreader,serif;font-weight:400;font-size:24px;letter-spacing:-0.01em;margin:0">Vídeos em destaque</h2>
+            <span onClick="{{ goVideos }}" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:#8A8D93;cursor:pointer" style-hover="color:#A8394A">Ver todos →</span>
+          </div>
+          <div style="display:grid;grid-template-columns:{{ gridCols }};column-gap:26px;row-gap:36px">
+            <sc-for list="{{ topVideos }}" as="v" hint-placeholder-count="8">
+              <div style="cursor:pointer;display:flex;flex-direction:column;gap:10px" style-hover="opacity:0.78">
+                <div style="position:relative;aspect-ratio:3/4;background:#F1EEE8;display:flex;align-items:center;justify-content:center">
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#B4AEA2">capa do vídeo</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#9A9C9F">
+                  <span>{{ v.author }}</span>
+                  <span style="color:#A8394A">{{ v.viralLabel }}</span>
+                </div>
+                <div style="font-size:13px;line-height:1.4;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.8em;text-wrap:pretty">{{ v.description }}</div>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid #E5E2DA;padding-top:9px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8A8D93">
+                  <span>{{ v.viewsLabel }} views</span>
+                  <span>{{ v.likesLabel }} curtidas</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{ isProdutos }}">
+        <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:32px;padding-bottom:24px;border-bottom:1px solid #17181A">
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#9A9C9F;margin-bottom:10px">Produtos</div>
+            <h1 style="font-family:Newsreader,serif;font-weight:400;font-size:40px;line-height:1.05;letter-spacing:-0.015em;margin:0">Catálogo monitorado</h1>
+          </div>
+          <div style="text-align:right;font-size:12px;color:#8A8D93;line-height:1.5;padding-bottom:4px">Última coleta<br /><span style="font-family:'IBM Plex Mono',monospace;color:#45484D">29/08/2026, 09:45:36</span></div>
+        </header>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid #E5E2DA;margin-bottom:44px">
+          <div style="padding:26px 26px 26px 0;border-right:1px solid #E5E2DA;display:flex;gap:56px">
+            <div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#9A9C9F;margin-bottom:12px">Produtos únicos</div>
+              <div style="font-family:Newsreader,serif;font-size:38px;font-weight:400;line-height:1">235</div>
+            </div>
+            <div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#9A9C9F;margin-bottom:12px">Runs</div>
+              <div style="font-family:Newsreader,serif;font-size:38px;font-weight:400;line-height:1">13</div>
+            </div>
+          </div>
+          <div style="padding:26px 0 26px 26px;display:flex;flex-direction:column;justify-content:space-between;gap:18px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px">
+              <div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#9A9C9F;margin-bottom:8px">Coletar agora</div>
+                <p style="margin:0;font-size:12.5px;color:#8A8D93;line-height:1.55;max-width:44ch">A request vai pro Firestore e uma Cloud Function dispara a coleta — não precisa nada rodando no seu PC.</p>
+              </div>
+            </div>
+            <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap">
+              <input type="text" value="achadinhos, tiktokshop" style="flex:1;min-width:180px;border:0;border-bottom:1px solid #D9D5CB;background:transparent;padding:7px 0;font-size:13px;color:#17181A;outline:none" />
+              <input type="number" value="0" style="width:52px;border:0;border-bottom:1px solid #D9D5CB;background:transparent;padding:7px 0;font-size:13px;color:#17181A;outline:none;font-family:'IBM Plex Mono',monospace" />
+              <button style="border:0;background:#17181A;color:#FBFAF7;padding:9px 20px;font-size:12.5px;font-weight:500;cursor:pointer;border-radius:2px" style-hover="background:#A8394A">Enfileirar</button>
+            </div>
+            <div style="display:flex;gap:22px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8A8D93">
+              <sc-for list="{{ requests }}" as="r" hint-placeholder-count="4">
+                <span style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:{{ r.color }}"></span>{{ r.label }}</span>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:36px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid #17181A;margin-bottom:30px;position:sticky;top:0;background:#FBFAF7;z-index:5;padding-top:10px">
+          <div style="display:flex;gap:26px;align-items:baseline">
+            <sc-for list="{{ modes }}" as="m" hint-placeholder-count="4">
+              <span onClick="{{ m.select }}" style="cursor:pointer;font-size:13.5px;color:{{ m.color }};font-weight:{{ m.weight }};padding-bottom:6px;border-bottom:1px solid {{ m.mark }}" style-hover="color:#17181A">{{ m.label }}</span>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:24px;align-items:flex-end;flex:1;justify-content:flex-end;flex-wrap:wrap">
+            <input type="text" placeholder="Buscar produto ou loja" onInput="{{ onSearch }}" style="flex:0 1 230px;border:0;border-bottom:1px solid #D9D5CB;background:transparent;padding:6px 0;font-size:13px;color:#17181A;outline:none" />
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <label style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#9A9C9F">Mín. vendidos</label>
+              <input type="number" value="0" onInput="{{ onMinSold }}" style="width:78px;border:0;border-bottom:1px solid #D9D5CB;background:transparent;padding:5px 0;font-size:13px;color:#17181A;outline:none;font-family:'IBM Plex Mono',monospace" />
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <label style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#9A9C9F">Mín. avaliação</label>
+              <input type="number" value="0" step="0.1" onInput="{{ onMinRating }}" style="width:64px;border:0;border-bottom:1px solid #D9D5CB;background:transparent;padding:5px 0;font-size:13px;color:#17181A;outline:none;font-family:'IBM Plex Mono',monospace" />
+            </div>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#9A9C9F;padding-bottom:6px">{{ filterCount }}</span>
+          </div>
+        </div>
+
+        <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:{{ gridCols }};column-gap:26px;row-gap:36px">
+            <sc-for list="{{ listProducts }}" as="p" hint-placeholder-count="18">
+              <div onClick="{{ p.open }}" style="cursor:pointer;display:flex;flex-direction:column;gap:10px" style-hover="opacity:0.78">
+                <div style="position:relative;aspect-ratio:1/1;background:#F1EEE8;display:flex;align-items:center;justify-content:center">
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#B4AEA2">foto do produto</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#9A9C9F">
+                  <span>{{ p.rankLabel }}</span>
+                  <span style="color:#A8394A">{{ p.viralLabel }}</span>
+                </div>
+                <div style="font-size:13px;line-height:1.4;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.8em;text-wrap:pretty">{{ p.title }}</div>
+                <div style="font-size:11.5px;color:#9A9C9F;margin-top:-4px">{{ p.seller }}</div>
+                <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;border-top:1px solid #E5E2DA;padding-top:9px">
+                  <span style="font-family:Newsreader,serif;font-size:17px;font-weight:500;white-space:nowrap">{{ p.priceLabel }}</span>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8A8D93;white-space:nowrap">{{ p.soldLabel }} · {{ p.ratingLabel }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noResults }}">
+          <div style="padding:80px 0;text-align:center">
+            <div style="font-family:Newsreader,serif;font-size:22px;margin-bottom:8px">Nenhum produto bate o filtro</div>
+            <div style="font-size:13px;color:#8A8D93">Baixe os mínimos ou limpe a busca.</div>
+          </div>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ isVideos }}">
+        <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:32px;padding-bottom:24px;border-bottom:1px solid #17181A;margin-bottom:26px">
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#9A9C9F;margin-bottom:10px">Vídeos virais</div>
+            <h1 style="font-family:Newsreader,serif;font-weight:400;font-size:40px;line-height:1.05;letter-spacing:-0.015em;margin:0">Vídeos que puxam venda</h1>
+          </div>
+          <div style="text-align:right;padding-bottom:4px">
+            <div style="font-family:Newsreader,serif;font-size:38px;line-height:1">15</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#9A9C9F;margin-top:6px">Com produto</div>
+          </div>
+        </header>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:24px;padding-bottom:14px;border-bottom:1px solid #E5E2DA;margin-bottom:34px">
+          <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:#45484D;cursor:pointer">
+            <input type="checkbox" checked="{{ onlyWithProduct }}" onChange="{{ toggleOnlyProduct }}" style="width:14px;height:14px;accent-color:#A8394A" />
+            Só vídeo viral com produto confirmado
+          </label>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#9A9C9F">{{ videoCountLabel }}</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:{{ gridCols }};column-gap:26px;row-gap:36px">
+          <sc-for list="{{ allVideos }}" as="v" hint-placeholder-count="12">
+            <div style="cursor:pointer;display:flex;flex-direction:column;gap:10px" style-hover="opacity:0.78">
+              <div style="position:relative;aspect-ratio:3/4;background:#F1EEE8;display:flex;align-items:center;justify-content:center">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#B4AEA2">capa do vídeo</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#9A9C9F">
+                <span>{{ v.author }}</span>
+                <span style="color:#A8394A">{{ v.viralLabel }}</span>
+              </div>
+              <div style="font-size:13px;line-height:1.4;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.8em;text-wrap:pretty">{{ v.description }}</div>
+              <div style="font-size:11.5px;color:#45484D;margin-top:-2px">{{ v.productLabel }}</div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid #E5E2DA;padding-top:9px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8A8D93">
+                <span>{{ v.viewsLabel }} views</span>
+                <span>{{ v.likesLabel }} curtidas</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isLojas }}">
+        <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:32px;padding-bottom:24px;border-bottom:1px solid #17181A;margin-bottom:22px">
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#9A9C9F;margin-bottom:10px">Lojas</div>
+            <h1 style="font-family:Newsreader,serif;font-weight:400;font-size:40px;line-height:1.05;letter-spacing:-0.015em;margin:0">Vendedores encontrados</h1>
+          </div>
+          <p style="margin:0 0 4px;max-width:46ch;font-size:12.5px;color:#8A8D93;line-height:1.6;text-align:right">A soma de vendas é dos produtos já coletados desta loja — não é o total real da loja no TikTok Shop.</p>
+        </header>
+
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:12px 0;border-bottom:1px solid #17181A;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8A8D93;font-weight:400">Loja</th>
+              <th style="text-align:right;padding:12px 0;border-bottom:1px solid #17181A;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8A8D93;font-weight:400">Produtos</th>
+              <th style="text-align:right;padding:12px 0;border-bottom:1px solid #17181A;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8A8D93;font-weight:400">Vendas monitoradas</th>
+              <th style="text-align:right;padding:12px 0 12px 40px;border-bottom:1px solid #17181A;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8A8D93;font-weight:400">Preço médio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ sellers }}" as="s" hint-placeholder-count="12">
+              <tr style="border-bottom:1px solid #E5E2DA" style-hover="background:#F4F1EB">
+                <td style="padding:13px 0">
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <span style="width:26px;height:26px;background:#EDEAE3;flex-shrink:0"></span>
+                    <span style="font-size:13.5px">{{ s.name }}</span>
+                  </div>
+                </td>
+                <td style="padding:13px 0;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#45484D">{{ s.productCount }}</td>
+                <td style="padding:13px 0;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#45484D">{{ s.soldLabel }}</td>
+                <td style="padding:13px 0 13px 40px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#45484D">{{ s.avgPrice }}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </sc-if>
+
+      <sc-if value="{{ isSistema }}">
+        <header style="padding-bottom:24px;border-bottom:1px solid #17181A;margin-bottom:44px">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#9A9C9F;margin-bottom:10px">Sistema</div>
+          <h1 style="font-family:Newsreader,serif;font-weight:400;font-size:40px;line-height:1.05;letter-spacing:-0.015em;margin:0 0 12px">Diagnóstico</h1>
+          <p style="margin:0;font-size:13px;color:#8A8D93">Somente leitura — sem nada editável por aqui.</p>
+        </header>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #E5E2DA;margin-bottom:56px">
+          <div style="padding:0 26px 26px 0;border-right:1px solid #E5E2DA">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#9A9C9F;margin-bottom:14px">Seeds de produtos</div>
+            <div style="font-family:Newsreader,serif;font-size:26px;font-weight:400">achadinhos, tiktokshop</div>
+          </div>
+          <div style="padding:0 0 26px 26px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#9A9C9F;margin-bottom:14px">Seeds de vídeos (hashtags)</div>
+            <div style="font-family:Newsreader,serif;font-size:26px;font-weight:400">tiktokshop, achadinhos</div>
+          </div>
+        </div>
+
+        <h2 style="font-family:Newsreader,serif;font-weight:400;font-size:24px;margin:0 0 18px">Últimas execuções</h2>
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:12px 0;border-bottom:1px solid #17181A;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8A8D93;font-weight:400">Início</th>
+              <th style="text-align:left;padding:12px 0;border-bottom:1px solid #17181A;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8A8D93;font-weight:400">Origem</th>
+              <th style="text-align:right;padding:12px 0;border-bottom:1px solid #17181A;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8A8D93;font-weight:400">Encontrados</th>
+              <th style="text-align:right;padding:12px 0;border-bottom:1px solid #17181A;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8A8D93;font-weight:400">Salvos</th>
+              <th style="text-align:right;padding:12px 0;border-bottom:1px solid #17181A;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8A8D93;font-weight:400">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ runs }}" as="r" hint-placeholder-count="13">
+              <tr style="border-bottom:1px solid #E5E2DA" style-hover="background:#F4F1EB">
+                <td style="padding:12px 0;font-family:'IBM Plex Mono',monospace;font-size:12.5px">{{ r.startedAt }}</td>
+                <td style="padding:12px 0;font-size:13px;color:#45484D">{{ r.source }}</td>
+                <td style="padding:12px 0;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#45484D">{{ r.found }}</td>
+                <td style="padding:12px 0;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#45484D">{{ r.saved }}</td>
+                <td style="padding:12px 0;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#8A8D93">{{ r.status }}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </sc-if>
+
+      <sc-if value="{{ isDetail }}">
+        <div onClick="{{ goProdutos }}" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:#8A8D93;cursor:pointer;margin-bottom:26px" style-hover="color:#A8394A">← Produtos</div>
+
+        <div style="display:grid;grid-template-columns:minmax(200px,300px) minmax(0,1fr);gap:48px;padding-bottom:44px;border-bottom:1px solid #17181A;margin-bottom:44px">
+          <div style="aspect-ratio:1/1;background:#F1EEE8;display:flex;align-items:center;justify-content:center">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#B4AEA2">foto do produto</span>
+          </div>
+          <div style="min-width:0;display:flex;flex-direction:column;justify-content:space-between;gap:28px">
+            <div style="min-width:0">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:#9A9C9F;margin-bottom:12px;overflow-wrap:anywhere">{{ detail.seller }} · {{ detail.id }}</div>
+              <h1 style="font-family:Newsreader,serif;font-weight:400;font-size:36px;line-height:1.15;letter-spacing:-0.015em;margin:0 0 16px;max-width:22ch;text-wrap:pretty">{{ detail.title }}</h1>
+              <a href="#" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase">Abrir no TikTok Shop →</a>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(94px,1fr));border-top:1px solid #E5E2DA">
+              <div style="min-width:0;padding:18px 14px 0 0;border-right:1px solid #E5E2DA">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#9A9C9F;margin-bottom:8px">Vendidos</div>
+                <div style="font-family:Newsreader,serif;font-size:26px">{{ detail.sold }}</div>
+              </div>
+              <div style="min-width:0;padding:18px 14px;border-right:1px solid #E5E2DA">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#9A9C9F;margin-bottom:8px">Preço</div>
+                <div style="font-family:Newsreader,serif;font-size:26px;white-space:nowrap">{{ detail.price }}</div>
+              </div>
+              <div style="min-width:0;padding:18px 14px;border-right:1px solid #E5E2DA">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#9A9C9F;margin-bottom:8px">Rating</div>
+                <div style="font-family:Newsreader,serif;font-size:26px">{{ detail.rating }}</div>
+              </div>
+              <div style="min-width:0;padding:18px 14px;border-right:1px solid #E5E2DA">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#9A9C9F;margin-bottom:8px">Reviews</div>
+                <div style="font-family:Newsreader,serif;font-size:26px">{{ detail.reviews }}</div>
+              </div>
+              <div style="min-width:0;padding:18px 0 0 14px">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#9A9C9F;margin-bottom:8px">Viral</div>
+                <div style="font-family:Newsreader,serif;font-size:26px;color:#A8394A">{{ detail.viral }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:52px;margin-bottom:56px">
+          <div>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid #E5E2DA;margin-bottom:20px">
+              <h3 style="font-family:Newsreader,serif;font-weight:400;font-size:20px;margin:0">Vendas ao longo do tempo</h3>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#9A9C9F">14 dias</span>
+            </div>
+            <svg viewBox="0 0 520 120" style="width:100%;height:120px;display:block">
+              <polyline fill="none" stroke="#17181A" stroke-width="1.25" points="{{ soldPoints }}"></polyline>
+            </svg>
+          </div>
+          <div>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid #E5E2DA;margin-bottom:20px">
+              <h3 style="font-family:Newsreader,serif;font-weight:400;font-size:20px;margin:0">Preço ao longo do tempo</h3>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#9A9C9F">14 dias</span>
+            </div>
+            <svg viewBox="0 0 520 120" style="width:100%;height:120px;display:block">
+              <polyline fill="none" stroke="#A8394A" stroke-width="1.25" points="{{ pricePoints }}"></polyline>
+            </svg>
+          </div>
+        </div>
+
+        <h3 style="font-family:Newsreader,serif;font-weight:400;font-size:22px;margin:0 0 18px">Snapshots recentes</h3>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:56px">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:12px 0;border-bottom:1px solid #17181A;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8A8D93;font-weight:400">Capturado em</th>
+              <th style="text-align:right;padding:12px 0;border-bottom:1px solid #17181A;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8A8D93;font-weight:400">Preço</th>
+              <th style="text-align:right;padding:12px 0;border-bottom:1px solid #17181A;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8A8D93;font-weight:400">Vendidos</th>
+              <th style="text-align:right;padding:12px 0;border-bottom:1px solid #17181A;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8A8D93;font-weight:400">Rating</th>
+              <th style="text-align:right;padding:12px 0;border-bottom:1px solid #17181A;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:#8A8D93;font-weight:400">Viral</th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ snapshots }}" as="s" hint-placeholder-count="8">
+              <tr style="border-bottom:1px solid #E5E2DA">
+                <td style="padding:12px 0;font-family:'IBM Plex Mono',monospace;font-size:12.5px">{{ s.at }}</td>
+                <td style="padding:12px 0;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#45484D">{{ s.price }}</td>
+                <td style="padding:12px 0;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#45484D">{{ s.sold }}</td>
+                <td style="padding:12px 0;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#45484D">{{ s.rating }}</td>
+                <td style="padding:12px 0;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#45484D">{{ s.viral }}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+
+        <h3 style="font-family:Newsreader,serif;font-weight:400;font-size:22px;margin:0 0 22px">Vídeos relacionados</h3>
+        <div style="display:grid;grid-template-columns:{{ gridCols }};column-gap:26px;row-gap:36px">
+          <sc-for list="{{ relatedVideos }}" as="v" hint-placeholder-count="4">
+            <div style="cursor:pointer;display:flex;flex-direction:column;gap:10px" style-hover="opacity:0.78">
+              <div style="aspect-ratio:3/4;background:#F1EEE8;display:flex;align-items:center;justify-content:center">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#B4AEA2">capa do vídeo</span>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#9A9C9F">{{ v.author }}</div>
+              <div style="font-size:13px;line-height:1.4;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ v.description }}</div>
+              <div style="display:flex;justify-content:space-between;border-top:1px solid #E5E2DA;padding-top:9px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#8A8D93">
+                <span>{{ v.viewsLabel }} views</span>
+                <span>{{ v.likesLabel }} curtidas</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+    </main>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#A8394A&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#A8394A&quot;,&quot;#1F5C4B&quot;,&quot;#2B4570&quot;,&quot;#7A5230&quot;],&quot;section&quot;:&quot;Aparência&quot;},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;compacta&quot;,&quot;options&quot;:[&quot;compacta&quot;,&quot;confortável&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Aparência&quot;}}">
+const PRODUCTS = [
+  { id: '1731979629535528736', title: 'Macaquinho Feminino Moda Gringa Fitness Macacão Gringo Zero Transparência', seller: 'KaluModaa', price: 35.99, sold: 1800, rating: 4.6, reviews: 412, viral: 8200 },
+  { id: '1731141729902954292', title: 'Conjunto Fitness de Academia Feminino Zero Transparência', seller: '80inove Fitness', price: 29.40, sold: 1100, rating: 4.6, reviews: 318, viral: 4900 },
+  { id: '1733321916641085214', title: 'Kit Halteres 6 Em 1 15/20/26Kg Musculação Ajustável Kettlebell', seller: 'Pluggei Select', price: 179.90, sold: 754, rating: 4.9, reviews: 201, viral: 3700 },
+  { id: '22535865205328834', title: 'Macaquinho Feminino Fitness Zero Transparência Academia', seller: 'La Vitória', price: 35.40, sold: 676, rating: 4.4, reviews: 158, viral: 3000 },
+  { id: '1732293036814337341', title: 'TOP VENDA Aparelho Abdominal Multifuncional | Base Ventosa', seller: 'AAKS BR', price: 36.99, sold: 608, rating: 4.7, reviews: 143, viral: 2900 },
+  { id: '1732648488332526683', title: 'Calça Legging Esportiva Yoga Tie Dye, Legging sem costura', seller: 'MIRELLE', price: 34.56, sold: 554, rating: 4.5, reviews: 97, viral: 2200 },
+  { id: '1735955960474339009', title: 'Kit Halteres Barra E Anilhas Musculação Kettlebell Ajustável', seller: 'LHP IMPORTS', price: 176.99, sold: 379, rating: 4.8, reviews: 88, viral: 1800 },
+  { id: '1734222741251589531', title: 'Kit Halter Ajustável 20/30kg 6 em 1 com Barra e Kettlebell', seller: 'Brave Bull Store', price: 208.00, sold: 344, rating: 4.9, reviews: 76, viral: 1700 },
+  { id: '1731700906534406134', title: 'Creatina Monohidratada Pura 1kg, 600g, 300g, 150g, 100g', seller: 'Dark Lab', price: 77.90, sold: 504, rating: 4.7, reviews: 132, viral: 1600 },
+  { id: '1731436273955997311', title: 'Regata Academia Feminina Fitness Alça Larga Poliamida Slim', seller: 'T All Store', price: 32.90, sold: 2100, rating: 4.6, reviews: 388, viral: 1500 },
+  { id: '1735664220224325072', title: 'Camisete Feminina Bailarina com Cabinha e Detalhes em Renda', seller: 'Lu Modas', price: 16.99, sold: 2000, rating: 4.5, reviews: 344, viral: 1400 },
+  { id: '1732078392739530399', title: 'Principe Gel de Limpeza Facial GL 03 com 200g | Peles Mistas', seller: 'PRINCIPE', price: 21.90, sold: 934, rating: 4.8, reviews: 210, viral: 1300 },
+  { id: '1733153356171281566', title: 'Camiseta Masculina Polo Poliamida Iconalizada Premium', seller: 'T All Store', price: 34.90, sold: 1400, rating: 4.7, reviews: 265, viral: 1250 },
+  { id: '1735243469055362774', title: 'Tamanco Feminino Plataforma EVA com Enfeites de Strass', seller: 'AVP Calçados', price: 14.99, sold: 2400, rating: 4.4, reviews: 501, viral: 1180 },
+  { id: '1735473440540231326', title: 'Camisa Polo Masculina em Tecido de Alta Qualidade', seller: 'Mundo Vestir', price: 30.18, sold: 2000, rating: 4.5, reviews: 297, viral: 1120 },
+  { id: '1735473440540231327', title: 'Kit Vitrine Especial de Bijuteria Camisola Branca', seller: 'Vitrine Feminina', price: 18.45, sold: 2200, rating: 4.6, reviews: 356, viral: 1050 },
+  { id: '1735473440540231328', title: 'Shorts saia Soltinho tipo bumbum confortável para academia', seller: 'Dama e Traça', price: 29.49, sold: 1100, rating: 4.5, reviews: 188, viral: 980 },
+  { id: '1735473440540231329', title: 'Conjunto 12 Potes Herméticos 800ml — Alta Vedação BPA Free', seller: 'Ver A Casa', price: 15.75, sold: 1200, rating: 4.6, reviews: 232, viral: 940 },
+  { id: '1735473440540231330', title: 'Shorts 2 em 1 DryFit VLD Original Fitness Academia Esporte', seller: 'SG CLOTHING', price: 28.99, sold: 2100, rating: 4.6, reviews: 401, viral: 900 },
+  { id: '1735473440540231331', title: 'Regata Feminina Fitness Dry com Alcinha Básica Poliamida', seller: 'La Vitória', price: 28.10, sold: 1900, rating: 4.4, reviews: 289, viral: 860 },
+  { id: '1735473440540231332', title: 'Camiseta de Compressão Masculina Premium Pro Lycra', seller: 'Norte Fitness', price: 31.99, sold: 1100, rating: 4.5, reviews: 176, viral: 820 },
+  { id: '1735473440540231333', title: 'Kit 6 Sun Vita Copo Térmico Água Squeeze com Adesivos', seller: 'Bonjour BR', price: 15.25, sold: 900, rating: 4.5, reviews: 141, viral: 780 },
+  { id: '1735473440540231334', title: 'Kit Halteres 6 Em 1 15/20/26Kg Musculação Ajustável Kettlebell', seller: 'Pluggei Select', price: 179.90, sold: 740, rating: 4.9, reviews: 190, viral: 740 },
+  { id: '1735473440540231335', title: 'Máquina Fotográfica Câmera Digital Retrô Infantil', seller: 'Kids House', price: 42.90, sold: 610, rating: 4.3, reviews: 98, viral: 700 },
+];
+
+const VIDEOS = [
+  { id: 'v1', author: '@achadinhosdacasabr_', description: '#tiktokshop #tiktokshopbr #cozinhar #achadinhos #receitas', product: 'Produto 1731979629535528736', views: 6000000, likes: 38000, viral: 6400000 },
+  { id: 'v2', author: '@zathtv', description: 'KIT de Faca Inox 6 Peças Com Cabo Reforçado Aço — adquira no link', product: 'Produto 1731141729902954292', views: 5400000, likes: 15400, viral: 5500000 },
+  { id: 'v3', author: '@peaoleo', description: 'Jogo de Cama Lençol Micropercal 400 fios #jogodecama #lençol', product: 'Produto 1733321916641085214', views: 2200000, likes: 13400, viral: 2300000 },
+  { id: 'v4', author: '@drip.verso', description: 'Dispenser forma de gelo #achadinhos #shopee #cozinha', product: 'Produto 22535865205328834', views: 1400000, likes: 20000, viral: 1900000 },
+  { id: 'v5', author: '@vicgostou', description: 'Você precisa de um kit desses na sua caixa de ferramentas e nem sabe', product: 'Produto 1732293036814337341', views: 1500000, likes: 13600, viral: 1700000 },
+  { id: 'v6', author: '@mare.gaab', description: 'Esse cropped azul é uma graça #modafeminina #look', product: 'Produto 1732648488332526683', views: 1400000, likes: 27100, viral: 1600000 },
+  { id: 'v7', author: '@bia.shopsp', description: 'o detalhe da corrente de coração me ganhou e ainda por cima', product: 'Produto 1735955960474339009', views: 752900, likes: 19100, viral: 940800 },
+  { id: 'v8', author: '@clariachadinhos', description: 'Sandália linda, confortável e baratinha! Quem ama...', product: 'Produto 1734222741251589531', views: 279200, likes: 20500, viral: 462700 },
+  { id: 'v9', author: '@user688762122326', description: '#tiktokshop #fyp', product: 'Produto 1731700906534406134', views: 243700, likes: 1800, viral: 259900 },
+  { id: 'v10', author: '@let22tiktokshop', description: '#tiktokshop #fyp #parati', product: 'Produto 1731436273955997311', views: 134600, likes: 1000, viral: 153800 },
+  { id: 'v11', author: '@gra3a42', description: '#tiktokshop #fyp', product: 'Produto 1735664220224325072', views: 65100, likes: 191, viral: 67200 },
+  { id: 'v12', author: '@user2957958314654', description: '#TikTokShopBR99 #tiktokshop #tiktokshopmademebuyit', product: 'Produto 1732078392739530399', views: 40600, likes: 740, viral: 50500 },
+  { id: 'v13', author: '@mariana.shp', description: 'Kit 30 Marmita Potes 800ml #tiktokshop #promocao', product: 'Produto 1733153356171281566', views: 43700, likes: 525, viral: 49700 },
+  { id: 'v14', author: '@amandasimukawa', description: '#tiktokshop #modafeminina', product: 'Produto 1735243469055362774', views: 4800, likes: 1400, viral: 15700 },
+  { id: 'v15', author: '@luana_cust', description: '#ViralTikTokShop #tiktokshop #base', product: 'Produto 1735473440540231326', views: 127, likes: 4, viral: 159 },
+];
+
+const RUNS = [
+  ['29/08/2026, 09:45:36', 'scrape_request', 30, 30, 'ok'],
+  ['29/08/2026, 06:30:17', 'discovery', 29, 29, 'ok'],
+  ['29/08/2026, 06:30:02', 'scheduled', 30, 30, 'ok'],
+  ['29/08/2026, 03:07:15', 'discovery', 60, 60, 'ok'],
+  ['29/08/2026, 02:01:31', 'local-test', 40, 15, 'ok'],
+  ['29/08/2026, 02:00:38', 'local-test', 40, 0, 'ok'],
+  ['29/08/2026, 01:53:45', 'video_collector_local_test', 0, 0, 'ok'],
+  ['29/08/2026, 01:07:31', 'scrape_request', 30, 30, 'ok'],
+  ['29/08/2026, 00:49:26', 'scrape_request', 29, 29, 'ok'],
+  ['29/08/2026, 00:39:42', 'scrape_request', 30, 30, 'ok'],
+  ['29/08/2026, 00:35:48', 'scrape_request', 29, 29, 'ok'],
+  ['29/08/2026, 00:31:49', 'scrape_request', 10, 10, 'ok'],
+  ['28/08/2026, 15:21:58', 'scrapecreators.shop.search', 7, 7, 'ok'],
+];
+
+const REQUESTS = [
+  ['achadinhos', 'done'], ['zorel', 'done'], ['copo', 'done'], ['copo verde', 'done'],
+];
+
+function fmt(n) {
+  if (n == null) return '—';
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+  return String(n);
+}
+function brl(v) {
+  return 'R$ ' + v.toFixed(2).replace('.', ',');
+}
+function points(values, w, h) {
+  const min = Math.min.apply(null, values);
+  const max = Math.max.apply(null, values);
+  const range = max - min || 1;
+  const step = w / Math.max(1, values.length - 1);
+  return values.map((v, i) => (i * step).toFixed(1) + ',' + (h - ((v - min) / range) * (h - 8) - 4).toFixed(1)).join(' ');
+}
+
+class Component extends DCLogic {
+  state = { page: 'overview', mode: 'viral', search: '', minSold: 0, minRating: 0, onlyWithProduct: true, detailId: PRODUCTS[0].id };
+
+  go = (page) => () => this.setState({ page });
+
+  card = (p, i) => ({
+    id: p.id,
+    title: p.title,
+    seller: p.seller,
+    rankLabel: '#' + String(i + 1).padStart(2, '0'),
+    viralLabel: fmt(p.viral),
+    priceLabel: brl(p.price),
+    soldLabel: fmt(p.sold) + ' vend.',
+    ratingLabel: p.rating != null ? p.rating.toFixed(1) + '★' : '—',
+    open: () => this.setState({ page: 'detail', detailId: p.id }),
+  });
+
+  video = (v) => ({
+    author: v.author,
+    description: v.description,
+    productLabel: v.product,
+    viralLabel: fmt(v.viral),
+    viewsLabel: fmt(v.views),
+    likesLabel: fmt(v.likes),
+  });
+
+  renderVals() {
+    const s = this.state;
+    const accent = this.props.accent ?? '#A8394A';
+    const density = this.props.density ?? 'compacta';
+    const gridCols = density === 'compacta'
+      ? 'repeat(auto-fill, minmax(172px, 1fr))'
+      : 'repeat(auto-fill, minmax(224px, 1fr))';
+
+    const navDefs = [
+      ['overview', 'Visão geral'], ['produtos', 'Produtos'], ['videos', 'Vídeos virais'],
+      ['lojas', 'Lojas'], ['sistema', 'Sistema'],
+    ];
+    const activePage = s.page === 'detail' ? 'produtos' : s.page;
+    const nav = navDefs.map(([key, label]) => ({
+      label,
+      go: this.go(key),
+      color: activePage === key ? '#17181A' : '#7C7F85',
+      weight: activePage === key ? '600' : '400',
+      mark: activePage === key ? accent : 'transparent',
+    }));
+
+    const modeDefs = [['viral', 'Em alta'], ['sold', 'Mais vendidos'], ['rating', 'Melhores avaliados'], ['withVideos', 'Com vídeos virais']];
+    const modes = modeDefs.map(([key, label]) => ({
+      label,
+      select: () => this.setState({ mode: key }),
+      color: s.mode === key ? '#17181A' : '#8A8D93',
+      weight: s.mode === key ? '600' : '400',
+      mark: s.mode === key ? '#17181A' : 'transparent',
+    }));
+
+    const videoProductIds = new Set(VIDEOS.map((v) => v.product.replace('Produto ', '')));
+    let list = PRODUCTS.filter((p) => p.sold >= s.minSold && (p.rating || 0) >= s.minRating);
+    if (s.search.trim()) {
+      const terms = s.search.toLowerCase().split(',').map((t) => t.trim()).filter(Boolean);
+      list = list.filter((p) => terms.some((t) => p.title.toLowerCase().includes(t) || p.seller.toLowerCase().includes(t)));
+    }
+    if (s.mode === 'sold') list = list.slice().sort((a, b) => b.sold - a.sold);
+    else if (s.mode === 'rating') list = list.slice().sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    else if (s.mode === 'withVideos') list = list.filter((p) => videoProductIds.has(p.id));
+    else list = list.slice().sort((a, b) => b.viral - a.viral);
+
+    const sellerMap = new Map();
+    PRODUCTS.forEach((p) => {
+      const cur = sellerMap.get(p.seller) || { name: p.seller, n: 0, sold: 0, priceSum: 0 };
+      cur.n += 1; cur.sold += p.sold; cur.priceSum += p.price;
+      sellerMap.set(p.seller, cur);
+    });
+    const sellers = [...sellerMap.values()].sort((a, b) => b.sold - a.sold).map((x) => ({
+      name: x.name, productCount: String(x.n), soldLabel: fmt(x.sold), avgPrice: brl(x.priceSum / x.n),
+    }));
+
+    const p = PRODUCTS.find((x) => x.id === s.detailId) || PRODUCTS[0];
+    const soldSeries = Array.from({ length: 14 }, (_, i) => Math.round(p.sold * (0.55 + 0.45 * (i / 13)) + (i % 3) * p.sold * 0.012));
+    const priceSeries = Array.from({ length: 14 }, (_, i) => p.price * (1 + (i % 4 === 0 ? 0.06 : i % 3 === 0 ? -0.03 : 0.01)));
+    const snapshots = soldSeries.slice().reverse().slice(0, 8).map((v, i) => ({
+      at: String(29 - i).padStart(2, '0') + '/08/2026, 06:30',
+      price: brl(priceSeries[13 - i]),
+      sold: fmt(v),
+      rating: p.rating.toFixed(1),
+      viral: fmt(Math.round(p.viral * (1 - i * 0.06))),
+    }));
+
+    const videos = s.onlyWithProduct ? VIDEOS : VIDEOS.concat(VIDEOS.slice(0, 6));
+
+    return {
+      isLogin: s.page === 'login',
+      isApp: s.page !== 'login',
+      isOverview: s.page === 'overview',
+      isProdutos: s.page === 'produtos',
+      isVideos: s.page === 'videos',
+      isLojas: s.page === 'lojas',
+      isSistema: s.page === 'sistema',
+      isDetail: s.page === 'detail',
+      nav, modes, gridCols, sellers, snapshots,
+      goProdutos: this.go('produtos'),
+      goVideos: this.go('videos'),
+      signOut: this.go('login'),
+      enter: this.go('overview'),
+      topProducts: PRODUCTS.slice().sort((a, b) => b.viral - a.viral).slice(0, 8).map(this.card),
+      topVideos: VIDEOS.slice(0, 8).map(this.video),
+      allVideos: videos.map(this.video),
+      listProducts: list.map(this.card),
+      hasResults: list.length > 0,
+      noResults: list.length === 0,
+      filterCount: list.length + ' de ' + PRODUCTS.length,
+      videoCountLabel: videos.length + ' vídeo(s)',
+      onlyWithProduct: s.onlyWithProduct,
+      toggleOnlyProduct: (e) => this.setState({ onlyWithProduct: e.target.checked }),
+      onSearch: (e) => this.setState({ search: e.target.value }),
+      onMinSold: (e) => this.setState({ minSold: Number(e.target.value) || 0 }),
+      onMinRating: (e) => this.setState({ minRating: Number(e.target.value) || 0 }),
+      requests: REQUESTS.map(([label, status]) => ({ label: label + ' · ' + status, color: status === 'done' ? '#4E7C5C' : '#B99B3E' })),
+      runs: RUNS.map(([startedAt, source, found, saved, status]) => ({ startedAt, source, found: String(found), saved: String(saved), status })),
+      detail: {
+        id: p.id, title: p.title, seller: p.seller, sold: fmt(p.sold),
+        price: brl(p.price), rating: p.rating.toFixed(1), reviews: fmt(p.reviews), viral: fmt(p.viral),
+      },
+      soldPoints: points(soldSeries, 520, 120),
+      pricePoints: points(priceSeries, 520, 120),
+      relatedVideos: VIDEOS.slice(0, 4).map(this.video),
+    };
+  }
+}
+</script>
+</body>
+</html>

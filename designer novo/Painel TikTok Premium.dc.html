@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  body { margin:0; background:#000; color:#fff; font-family:Inter,ui-sans-serif,system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:#25F4EE; text-decoration:none; }
+  a:hover { color:#fff; }
+  input, select, button { font-family:inherit; }
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-track { background:#000; }
+  ::-webkit-scrollbar-thumb { background:#2A2A32; border-radius:10px; }
+  ::-webkit-scrollbar-thumb:hover { background:#3F3F46; }
+</style>
+</helmet>
+
+<div style="display:flex;min-height:100vh;background:#000;color:#fff;font-family:Inter,system-ui,sans-serif">
+
+  <aside style="width:256px;flex-shrink:0;background:#000;border-right:1px solid #2A2A32;display:flex;flex-direction:column;justify-content:space-between;position:sticky;top:0;height:100vh">
+    <div>
+      <div style="height:80px;display:flex;align-items:center;padding:0 24px;border-bottom:1px solid rgba(42,42,50,0.5)">
+        <span style="font-size:20px;font-weight:700;letter-spacing:-0.02em;background:linear-gradient(90deg,#25F4EE,#FE2C55);-webkit-background-clip:text;background-clip:text;color:transparent">TikTok Shop</span>
+      </div>
+      <nav style="padding:28px 16px 0;display:flex;flex-direction:column;gap:4px">
+        <sc-for list="{{ nav }}" as="item" hint-placeholder-count="5">
+          <div onClick="{{ item.go }}" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;background:{{ item.bg }};border:1px solid {{ item.border }};color:{{ item.color }};transition:all .2s ease" style-hover="color:#fff;background:#18181B">
+            <span style="width:18px;height:18px;flex-shrink:0;background:{{ item.iconColor }};-webkit-mask:url({{ item.icon }}) center/contain no-repeat;mask:url({{ item.icon }}) center/contain no-repeat"></span>
+            {{ item.label }}
+          </div>
+        </sc-for>
+      </nav>
+    </div>
+    <div style="padding:16px;border-top:1px solid rgba(42,42,50,0.5)">
+      <div style="padding:12px 16px;display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:12px;color:#A1A1AA;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">gorilaalbino1996@gmail.com</span>
+        <button style="width:100%;padding:9px 0;background:#121214;border:1px solid #2A2A32;border-radius:10px;color:#fff;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px" style-hover="background:#18181B;border-color:#3F3F46">
+          <span style="width:15px;height:15px;background:#A1A1AA;-webkit-mask:url(https://unpkg.com/lucide-static@0.451.0/icons/log-out.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@0.451.0/icons/log-out.svg) center/contain no-repeat"></span>
+          Sair
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main style="flex:1;min-width:0;position:relative;overflow:hidden">
+    <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:800px;height:300px;background:rgba(37,244,238,0.05);filter:blur(120px);border-radius:9999px;pointer-events:none"></div>
+
+    <div style="max-width:1600px;margin:0 auto;padding:32px;position:relative;z-index:1;display:flex;flex-direction:column;gap:40px">
+
+      <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+          <sc-for list="{{ overviewStats }}" as="s" hint-placeholder-count="4">
+            <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;padding:20px;position:relative;overflow:hidden">
+              <div style="position:absolute;top:0;left:0;width:3px;height:100%;background:{{ s.bar }}"></div>
+              <p style="margin:0 0 8px;font-size:11px;color:#A1A1AA;font-weight:500;text-transform:uppercase;letter-spacing:0.08em">{{ s.label }}</p>
+              <p style="margin:0;font-size:30px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:-0.03em">{{ s.value }}</p>
+              <p style="margin:2px 0 0;font-size:13px;color:#A1A1AA;font-family:'JetBrains Mono',monospace">{{ s.sub }}</p>
+            </div>
+          </sc-for>
+        </div>
+
+        <section style="display:flex;flex-direction:column;gap:18px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <h2 style="margin:0;font-size:19px;font-weight:700;display:flex;align-items:center;gap:9px">
+              <span style="width:19px;height:19px;background:#25F4EE;-webkit-mask:url(https://unpkg.com/lucide-static@0.451.0/icons/sparkles.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@0.451.0/icons/sparkles.svg) center/contain no-repeat"></span>
+              Produtos em destaque
+            </h2>
+            <span onClick="{{ goProdutos }}" style="font-size:13px;font-weight:500;color:#A1A1AA;cursor:pointer;display:flex;align-items:center;gap:6px" style-hover="color:#fff">Ver todos →</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px">
+            <sc-for list="{{ topProducts }}" as="p" hint-placeholder-count="8">
+              <div onClick="{{ p.open }}" style="background:#121214;border:1px solid #2A2A32;border-radius:12px;overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;transition:all .3s ease" style-hover="border-color:#3F3F46;transform:translateY(-2px);box-shadow:0 10px 30px -10px rgba(0,0,0,.5), 0 0 15px -5px rgba(37,244,238,.1)">
+                <div style="position:absolute;top:12px;left:12px;z-index:2;font-size:10px;font-weight:700;padding:4px 8px;border-radius:5px;background:{{ p.rankBg }};border:1px solid {{ p.rankBorder }};color:#fff">{{ p.rankLabel }}</div>
+                <div style="position:absolute;top:12px;right:12px;z-index:2;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;background:rgba(254,44,85,0.9);color:#fff">{{ p.viralLabel }}</div>
+                <div style="aspect-ratio:1/1;background:#27272A;overflow:hidden">
+                  <img src="{{ p.image }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" />
+                </div>
+                <div style="padding:16px;display:flex;flex-direction:column;flex:1;justify-content:space-between;gap:12px">
+                  <div>
+                    <h3 style="margin:0 0 4px;font-size:13.5px;font-weight:500;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ p.title }}</h3>
+                    <p style="margin:0;font-size:12px;color:#A1A1AA">{{ p.seller }}</p>
+                  </div>
+                  <div>
+                    <p style="margin:0 0 8px;font-size:17px;font-weight:700">{{ p.priceLabel }}</p>
+                    <div style="display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:#A1A1AA;gap:8px">
+                      <span style="white-space:nowrap">{{ p.soldLabel }} vendidos</span>
+                      <span style="color:#EAB308;white-space:nowrap">★ {{ p.ratingLabel }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="display:flex;flex-direction:column;gap:18px;padding-bottom:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <h2 style="margin:0;font-size:19px;font-weight:700;display:flex;align-items:center;gap:9px">
+              <span style="width:19px;height:19px;background:#FE2C55;-webkit-mask:url(https://unpkg.com/lucide-static@0.451.0/icons/play-circle.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@0.451.0/icons/play-circle.svg) center/contain no-repeat"></span>
+              Vídeos em destaque
+            </h2>
+            <span onClick="{{ goVideos }}" style="font-size:13px;font-weight:500;color:#A1A1AA;cursor:pointer" style-hover="color:#fff">Ver todos →</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px">
+            <sc-for list="{{ topVideos }}" as="v" hint-placeholder-count="8">
+              <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:all .3s ease" style-hover="border-color:#3F3F46;transform:translateY(-2px);box-shadow:0 10px 30px -10px rgba(0,0,0,.5), 0 0 15px -5px rgba(254,44,85,.12)">
+                <div style="aspect-ratio:4/5;background:#27272A;position:relative;overflow:hidden">
+                  <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.8),rgba(0,0,0,.2) 55%,transparent);z-index:1;pointer-events:none"></div>
+                  <div style="position:absolute;top:12px;left:12px;z-index:2;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);font-size:10px;font-weight:700;padding:4px 8px;border-radius:5px">
+                    <span style="width:12px;height:12px;background:#25F4EE;-webkit-mask:url(https://unpkg.com/lucide-static@0.451.0/icons/tag.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@0.451.0/icons/tag.svg) center/contain no-repeat"></span>
+                    Produto
+                  </div>
+                  <div style="position:absolute;top:12px;right:12px;z-index:2;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;background:rgba(254,44,85,.9)">{{ v.viralLabel }}</div>
+                  <img src="{{ v.image }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" />
+                </div>
+                <div style="padding:16px;display:flex;flex-direction:column;flex:1;gap:8px">
+                  <p style="margin:0;font-size:12px;font-weight:600;color:#25F4EE;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ v.author }}</p>
+                  <h3 style="margin:0;font-size:13.5px;font-weight:500;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ v.description }}</h3>
+                  <div style="margin-top:4px;background:rgba(0,0,0,.5);border:1px solid #2A2A32;border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:2px">
+                    <span style="font-size:9.5px;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.08em">ID Produto associado</span>
+                    <span style="font-size:11.5px;font-family:'JetBrains Mono',monospace;color:#D4D4D8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ v.productId }}</span>
+                  </div>
+                  <div style="margin-top:auto;padding-top:12px;border-top:1px solid rgba(42,42,50,.5);display:flex;align-items:center;justify-content:space-between;font-size:11.5px;font-weight:500;gap:8px">
+                    <span style="color:#D4D4D8;white-space:nowrap">{{ v.viewsLabel }} views</span>
+                    <span style="color:#FE2C55;white-space:nowrap">♥ {{ v.likesLabel }}</span>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{ isProdutos }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+          <sc-for list="{{ produtosStats }}" as="s" hint-placeholder-count="3">
+            <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;padding:20px;position:relative;overflow:hidden">
+              <div style="position:absolute;top:0;left:0;width:3px;height:100%;background:{{ s.bar }}"></div>
+              <p style="margin:0 0 8px;font-size:11px;color:#A1A1AA;font-weight:500;text-transform:uppercase;letter-spacing:0.08em">{{ s.label }}</p>
+              <p style="margin:0;font-size:30px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:-0.03em">{{ s.value }}</p>
+              <p style="margin:2px 0 0;font-size:13px;color:#A1A1AA;font-family:'JetBrains Mono',monospace">{{ s.sub }}</p>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:18px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(180deg,#25F4EE,#FE2C55)"></div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:28px;flex-wrap:wrap">
+            <div>
+              <h2 style="margin:0 0 6px;font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px">
+                <span style="width:17px;height:17px;background:#25F4EE;-webkit-mask:url(https://unpkg.com/lucide-static@0.451.0/icons/zap.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@0.451.0/icons/zap.svg) center/contain no-repeat"></span>
+                Coletar agora
+              </h2>
+              <p style="margin:0;font-size:13px;color:#A1A1AA;line-height:1.55;max-width:52ch">Manda a request pro Firestore. Uma Cloud Function dispara a coleta automaticamente — não precisa nada rodando no seu PC.</p>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <input type="text" value="achadinhos, tiktokshop" style="min-width:220px;background:#000;border:1px solid #2A2A32;border-radius:9px;padding:10px 12px;color:#fff;font-size:13px;outline:none" />
+              <input type="number" value="0" style="width:64px;background:#000;border:1px solid #2A2A32;border-radius:9px;padding:10px 12px;color:#fff;font-size:13px;outline:none;font-family:'JetBrains Mono',monospace" />
+              <button style="border:0;border-radius:9px;padding:11px 20px;font-size:13px;font-weight:600;color:#fff;background:linear-gradient(90deg,#25F4EE,#FE2C55);cursor:pointer" style-hover="opacity:.88">▶ Enfileirar</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <sc-for list="{{ requests }}" as="r" hint-placeholder-count="4">
+              <span style="display:flex;align-items:center;gap:8px;background:#18181B;border:1px solid #2A2A32;padding:6px 12px;border-radius:999px;font-size:12px;color:#D4D4D8">
+                <span style="width:7px;height:7px;border-radius:50%;background:{{ r.color }}"></span>{{ r.label }}
+              </span>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <sc-for list="{{ modes }}" as="m" hint-placeholder-count="4">
+              <button onClick="{{ m.select }}" style="padding:9px 16px;border-radius:999px;font-size:13px;font-weight:500;cursor:pointer;background:{{ m.bg }};border:1px solid {{ m.border }};color:{{ m.color }}" style-hover="color:#fff">{{ m.label }}</button>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid #2A2A32">
+            <input type="text" placeholder="Buscar produto ou loja..." onInput="{{ onSearch }}" style="flex:1 1 280px;background:#121214;border:1px solid #2A2A32;border-radius:10px;padding:11px 14px;color:#fff;font-size:13.5px;outline:none" />
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <label style="font-size:10px;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.08em">Mín. vendidos</label>
+              <input type="number" value="0" onInput="{{ onMinSold }}" style="width:100px;background:#121214;border:1px solid #2A2A32;border-radius:10px;padding:10px 12px;color:#fff;font-size:13px;outline:none;font-family:'JetBrains Mono',monospace" />
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <label style="font-size:10px;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.08em">Mín. avaliação</label>
+              <input type="number" value="0" step="0.1" onInput="{{ onMinRating }}" style="width:86px;background:#121214;border:1px solid #2A2A32;border-radius:10px;padding:10px 12px;color:#fff;font-size:13px;outline:none;font-family:'JetBrains Mono',monospace" />
+            </div>
+            <span style="margin-left:auto;font-size:12px;color:#A1A1AA;font-family:'JetBrains Mono',monospace;padding-bottom:11px">{{ filterCount }}</span>
+          </div>
+
+          <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px">
+              <sc-for list="{{ listProducts }}" as="p" hint-placeholder-count="16">
+                <div onClick="{{ p.open }}" style="background:#121214;border:1px solid #2A2A32;border-radius:12px;overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;transition:all .3s ease" style-hover="border-color:#3F3F46;transform:translateY(-2px);box-shadow:0 10px 30px -10px rgba(0,0,0,.5), 0 0 15px -5px rgba(37,244,238,.1)">
+                  <div style="position:absolute;top:12px;left:12px;z-index:2;font-size:10px;font-weight:700;padding:4px 8px;border-radius:5px;background:{{ p.rankBg }};border:1px solid {{ p.rankBorder }};color:#fff">{{ p.rankLabel }}</div>
+                  <div style="position:absolute;top:12px;right:12px;z-index:2;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;background:rgba(254,44,85,.9);color:#fff">{{ p.viralLabel }}</div>
+                  <div style="aspect-ratio:1/1;background:#27272A;overflow:hidden">
+                    <img src="{{ p.image }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" />
+                  </div>
+                  <div style="padding:16px;display:flex;flex-direction:column;flex:1;justify-content:space-between;gap:12px">
+                    <div>
+                      <h3 style="margin:0 0 4px;font-size:13.5px;font-weight:500;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ p.title }}</h3>
+                      <p style="margin:0;font-size:12px;color:#A1A1AA">{{ p.seller }}</p>
+                    </div>
+                    <div>
+                      <p style="margin:0 0 8px;font-size:17px;font-weight:700">{{ p.priceLabel }}</p>
+                      <div style="display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:#A1A1AA;gap:8px">
+                        <span style="white-space:nowrap">{{ p.soldLabel }} vendidos</span>
+                        <span style="color:#EAB308;white-space:nowrap">★ {{ p.ratingLabel }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ prodPager.show }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:8px 0 20px">
+                <span style="font-size:12px;color:#A1A1AA;font-family:'JetBrains Mono',monospace">{{ prodPager.info }}</span>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <button onClick="{{ prodPager.prev }}" style="min-width:34px;height:34px;padding:0 12px;border-radius:9px;background:transparent;border:1px solid #2A2A32;color:{{ prodPager.prevColor }};font-size:13px;cursor:pointer" style-hover="background:#18181B">‹</button>
+                  <sc-for list="{{ prodPager.pages }}" as="pg" hint-placeholder-count="3">
+                    <button onClick="{{ pg.go }}" style="min-width:34px;height:34px;padding:0 10px;border-radius:9px;background:{{ pg.bg }};border:1px solid {{ pg.border }};color:{{ pg.color }};font-weight:{{ pg.weight }};font-size:13px;cursor:pointer" style-hover="background:#18181B">{{ pg.label }}</button>
+                  </sc-for>
+                  <button onClick="{{ prodPager.next }}" style="min-width:34px;height:34px;padding:0 12px;border-radius:9px;background:transparent;border:1px solid #2A2A32;color:{{ prodPager.nextColor }};font-size:13px;cursor:pointer" style-hover="background:#18181B">›</button>
+                </div>
+              </div>
+            </sc-if>
+          </sc-if>
+          <sc-if value="{{ noResults }}">
+            <div style="padding:80px 0;text-align:center;background:#121214;border:1px solid #2A2A32;border-radius:12px">
+              <p style="margin:0 0 6px;font-size:17px;font-weight:600">Nenhum produto bate o filtro</p>
+              <p style="margin:0;font-size:13px;color:#A1A1AA">Baixe os mínimos ou limpe a busca.</p>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isVideos }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+          <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;padding:20px;position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;width:3px;height:100%;background:#FE2C55"></div>
+            <p style="margin:0 0 8px;font-size:11px;color:#A1A1AA;font-weight:500;text-transform:uppercase;letter-spacing:0.08em">Vídeos virais com produto</p>
+            <p style="margin:0;font-size:30px;font-weight:700;font-family:'JetBrains Mono',monospace">15</p>
+          </div>
+          <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;padding:20px;position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;width:3px;height:100%;background:#25F4EE"></div>
+            <p style="margin:0 0 8px;font-size:11px;color:#A1A1AA;font-weight:500;text-transform:uppercase;letter-spacing:0.08em">Views somadas</p>
+            <p style="margin:0;font-size:30px;font-weight:700;font-family:'JetBrains Mono',monospace">{{ totalViews }}</p>
+          </div>
+          <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;padding:20px;position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;width:3px;height:100%;background:#3F3F46"></div>
+            <p style="margin:0 0 8px;font-size:11px;color:#A1A1AA;font-weight:500;text-transform:uppercase;letter-spacing:0.08em">Curtidas somadas</p>
+            <p style="margin:0;font-size:30px;font-weight:700;font-family:'JetBrains Mono',monospace">{{ totalLikes }}</p>
+          </div>
+        </div>
+
+        <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:10px;font-size:13.5px;color:#D4D4D8;cursor:pointer">
+            <input type="checkbox" checked="{{ onlyWithProduct }}" onChange="{{ toggleOnlyProduct }}" style="width:15px;height:15px;accent-color:#FE2C55" />
+            Só vídeo viral com produto confirmado
+          </label>
+          <span style="font-size:12px;color:#A1A1AA;font-family:'JetBrains Mono',monospace">{{ videoCountLabel }}</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px;padding-bottom:20px">
+          <sc-for list="{{ allVideos }}" as="v" hint-placeholder-count="12">
+            <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:all .3s ease" style-hover="border-color:#3F3F46;transform:translateY(-2px);box-shadow:0 10px 30px -10px rgba(0,0,0,.5), 0 0 15px -5px rgba(254,44,85,.12)">
+              <div style="aspect-ratio:4/5;background:#27272A;position:relative;overflow:hidden">
+                <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.8),rgba(0,0,0,.2) 55%,transparent);z-index:1;pointer-events:none"></div>
+                <div style="position:absolute;top:12px;left:12px;z-index:2;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);font-size:10px;font-weight:700;padding:4px 8px;border-radius:5px">
+                  <span style="width:12px;height:12px;background:#25F4EE;-webkit-mask:url(https://unpkg.com/lucide-static@0.451.0/icons/tag.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@0.451.0/icons/tag.svg) center/contain no-repeat"></span>
+                  Produto
+                </div>
+                <div style="position:absolute;top:12px;right:12px;z-index:2;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;background:rgba(254,44,85,.9)">{{ v.viralLabel }}</div>
+                <img src="{{ v.image }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" />
+              </div>
+              <div style="padding:16px;display:flex;flex-direction:column;flex:1;gap:8px">
+                <p style="margin:0;font-size:12px;font-weight:600;color:#25F4EE;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ v.author }}</p>
+                <h3 style="margin:0;font-size:13.5px;font-weight:500;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ v.description }}</h3>
+                <div style="margin-top:4px;background:rgba(0,0,0,.5);border:1px solid #2A2A32;border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:2px">
+                  <span style="font-size:9.5px;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.08em">ID Produto associado</span>
+                  <span style="font-size:11.5px;font-family:'JetBrains Mono',monospace;color:#D4D4D8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ v.productId }}</span>
+                </div>
+                <div style="margin-top:auto;padding-top:12px;border-top:1px solid rgba(42,42,50,.5);display:flex;align-items:center;justify-content:space-between;font-size:11.5px;font-weight:500;gap:8px">
+                  <span style="color:#D4D4D8;white-space:nowrap">{{ v.viewsLabel }} views</span>
+                  <span style="color:#FE2C55;white-space:nowrap">♥ {{ v.likesLabel }}</span>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ vidPager.show }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:24px">
+            <span style="font-size:12px;color:#A1A1AA;font-family:'JetBrains Mono',monospace">{{ vidPager.info }}</span>
+            <div style="display:flex;align-items:center;gap:6px">
+              <button onClick="{{ vidPager.prev }}" style="min-width:34px;height:34px;padding:0 12px;border-radius:9px;background:transparent;border:1px solid #2A2A32;color:{{ vidPager.prevColor }};font-size:13px;cursor:pointer" style-hover="background:#18181B">‹</button>
+              <sc-for list="{{ vidPager.pages }}" as="pg" hint-placeholder-count="2">
+                <button onClick="{{ pg.go }}" style="min-width:34px;height:34px;padding:0 10px;border-radius:9px;background:{{ pg.bg }};border:1px solid {{ pg.border }};color:{{ pg.color }};font-weight:{{ pg.weight }};font-size:13px;cursor:pointer" style-hover="background:#18181B">{{ pg.label }}</button>
+              </sc-for>
+              <button onClick="{{ vidPager.next }}" style="min-width:34px;height:34px;padding:0 12px;border-radius:9px;background:transparent;border:1px solid #2A2A32;color:{{ vidPager.nextColor }};font-size:13px;cursor:pointer" style-hover="background:#18181B">›</button>
+            </div>
+          </div>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ isLojas }}">
+        <div>
+          <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;display:flex;align-items:center;gap:10px">
+            <span style="width:22px;height:22px;background:#25F4EE;-webkit-mask:url(https://unpkg.com/lucide-static@0.451.0/icons/store.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@0.451.0/icons/store.svg) center/contain no-repeat"></span>
+            Lojas
+          </h1>
+          <p style="margin:0;font-size:13px;color:#A1A1AA;line-height:1.6;max-width:76ch">Vendedores encontrados nos produtos monitorados. A soma de vendas é dos produtos já coletados desta loja — não é o total de vendas real da loja no TikTok Shop.</p>
+        </div>
+
+        <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;overflow:hidden">
+          <table style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr style="background:#000">
+                <th style="text-align:left;padding:14px 20px;font-size:10.5px;font-weight:600;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.1em;border-bottom:1px solid #2A2A32">Loja</th>
+                <th style="text-align:right;padding:14px 20px;font-size:10.5px;font-weight:600;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.1em;border-bottom:1px solid #2A2A32">Produtos</th>
+                <th style="text-align:right;padding:14px 20px;font-size:10.5px;font-weight:600;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.1em;border-bottom:1px solid #2A2A32">Vendas monitoradas</th>
+                <th style="text-align:right;padding:14px 20px;font-size:10.5px;font-weight:600;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.1em;border-bottom:1px solid #2A2A32">Preço médio</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ sellers }}" as="s" hint-placeholder-count="12">
+                <tr style="border-bottom:1px solid rgba(42,42,50,.6)" style-hover="background:#18181B">
+                  <td style="padding:13px 20px">
+                    <div style="display:flex;align-items:center;gap:12px">
+                      <span style="width:30px;height:30px;border-radius:8px;background:#27272A;flex-shrink:0"></span>
+                      <span style="font-size:13.5px;font-weight:500">{{ s.name }}</span>
+                    </div>
+                  </td>
+                  <td style="padding:13px 20px;text-align:right;font-size:13px;color:#D4D4D8;font-family:'JetBrains Mono',monospace">{{ s.productCount }}</td>
+                  <td style="padding:13px 20px;text-align:right;font-size:13px;color:#D4D4D8;font-family:'JetBrains Mono',monospace">{{ s.soldLabel }}</td>
+                  <td style="padding:13px 20px;text-align:right;font-size:13px;color:#D4D4D8;font-family:'JetBrains Mono',monospace">{{ s.avgPrice }}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+          <sc-if value="{{ lojaPager.show }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:14px 20px;border-top:1px solid #2A2A32">
+              <span style="font-size:12px;color:#A1A1AA;font-family:'JetBrains Mono',monospace">{{ lojaPager.info }}</span>
+              <div style="display:flex;align-items:center;gap:6px">
+                <button onClick="{{ lojaPager.prev }}" style="min-width:34px;height:34px;padding:0 12px;border-radius:9px;background:transparent;border:1px solid #2A2A32;color:{{ lojaPager.prevColor }};font-size:13px;cursor:pointer" style-hover="background:#18181B">‹</button>
+                <sc-for list="{{ lojaPager.pages }}" as="pg" hint-placeholder-count="2">
+                  <button onClick="{{ pg.go }}" style="min-width:34px;height:34px;padding:0 10px;border-radius:9px;background:{{ pg.bg }};border:1px solid {{ pg.border }};color:{{ pg.color }};font-weight:{{ pg.weight }};font-size:13px;cursor:pointer" style-hover="background:#18181B">{{ pg.label }}</button>
+                </sc-for>
+                <button onClick="{{ lojaPager.next }}" style="min-width:34px;height:34px;padding:0 12px;border-radius:9px;background:transparent;border:1px solid #2A2A32;color:{{ lojaPager.nextColor }};font-size:13px;cursor:pointer" style-hover="background:#18181B">›</button>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSistema }}">
+        <div>
+          <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;display:flex;align-items:center;gap:10px">
+            <span style="width:22px;height:22px;background:#25F4EE;-webkit-mask:url(https://unpkg.com/lucide-static@0.451.0/icons/settings.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@0.451.0/icons/settings.svg) center/contain no-repeat"></span>
+            Sistema
+          </h1>
+          <p style="margin:0;font-size:13px;color:#A1A1AA">Diagnóstico somente leitura — sem nada editável por aqui.</p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+          <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;padding:20px">
+            <p style="margin:0 0 12px;font-size:11px;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.08em;font-weight:500">Seeds permanentes de produtos</p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <span style="background:#18181B;border:1px solid #2A2A32;color:#25F4EE;padding:6px 12px;border-radius:999px;font-size:12.5px;font-weight:500">achadinhos</span>
+              <span style="background:#18181B;border:1px solid #2A2A32;color:#25F4EE;padding:6px 12px;border-radius:999px;font-size:12.5px;font-weight:500">tiktokshop</span>
+            </div>
+          </div>
+          <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;padding:20px">
+            <p style="margin:0 0 12px;font-size:11px;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.08em;font-weight:500">Seeds permanentes de vídeos (hashtags)</p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <span style="background:#18181B;border:1px solid #2A2A32;color:#FE2C55;padding:6px 12px;border-radius:999px;font-size:12.5px;font-weight:500">#tiktokshop</span>
+              <span style="background:#18181B;border:1px solid #2A2A32;color:#FE2C55;padding:6px 12px;border-radius:999px;font-size:12.5px;font-weight:500">#achadinhos</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;overflow:hidden">
+          <div style="padding:18px 20px;border-bottom:1px solid #2A2A32">
+            <h2 style="margin:0;font-size:16px;font-weight:700">Últimas execuções</h2>
+          </div>
+          <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;table-layout:auto;min-width:560px">
+            <thead>
+              <tr style="background:#000">
+                <th style="text-align:left;padding:12px 14px;font-size:10.5px;font-weight:600;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.1em;border-bottom:1px solid #2A2A32;white-space:nowrap">Início</th>
+                <th style="text-align:left;padding:12px 14px;font-size:10.5px;font-weight:600;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.1em;border-bottom:1px solid #2A2A32">Origem</th>
+                <th style="text-align:right;padding:12px 14px;font-size:10.5px;font-weight:600;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.1em;border-bottom:1px solid #2A2A32">Encontr.</th>
+                <th style="text-align:right;padding:12px 14px;font-size:10.5px;font-weight:600;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.1em;border-bottom:1px solid #2A2A32">Salvos</th>
+                <th style="text-align:right;padding:12px 14px;font-size:10.5px;font-weight:600;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.1em;border-bottom:1px solid #2A2A32">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ runs }}" as="r" hint-placeholder-count="13">
+                <tr style="border-bottom:1px solid rgba(42,42,50,.6)" style-hover="background:#18181B">
+                  <td style="padding:12px 14px;font-size:12.5px;font-family:'JetBrains Mono',monospace;white-space:nowrap">{{ r.startedAt }}</td>
+                  <td style="padding:12px 14px;font-size:13px;color:#A1A1AA;word-break:break-word">{{ r.source }}</td>
+                  <td style="padding:12px 14px;text-align:right;font-size:12.5px;color:#D4D4D8;font-family:'JetBrains Mono',monospace">{{ r.found }}</td>
+                  <td style="padding:12px 14px;text-align:right;font-size:12.5px;color:#D4D4D8;font-family:'JetBrains Mono',monospace">{{ r.saved }}</td>
+                  <td style="padding:12px 14px;text-align:right">
+                    <span style="display:inline-flex;align-items:center;gap:7px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:#4ADE80;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:500">
+                      <span style="width:6px;height:6px;border-radius:50%;background:#4ADE80"></span>{{ r.status }}
+                    </span>
+                  </td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isDetail }}">
+        <div onClick="{{ goProdutos }}" style="font-size:13px;color:#A1A1AA;cursor:pointer;width:fit-content" style-hover="color:#25F4EE">← Voltar para Produtos</div>
+
+        <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;padding:24px;display:grid;grid-template-columns:minmax(180px,260px) minmax(0,1fr);gap:28px">
+          <div style="aspect-ratio:1/1;background:#27272A;border-radius:10px;overflow:hidden">
+            <img src="{{ detail.image }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" />
+          </div>
+          <div style="min-width:0;display:flex;flex-direction:column;justify-content:space-between;gap:22px">
+            <div style="min-width:0">
+              <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;line-height:1.25">{{ detail.title }}</h1>
+              <p style="margin:0 0 12px;font-size:13px;color:#A1A1AA">{{ detail.seller }} · <span style="font-family:'JetBrains Mono',monospace">{{ detail.id }}</span></p>
+              <a href="#" style="font-size:13px;font-weight:500">Abrir no TikTok Shop →</a>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px">
+              <sc-for list="{{ detailStats }}" as="d" hint-placeholder-count="5">
+                <div style="background:#000;border:1px solid #2A2A32;border-radius:10px;padding:14px">
+                  <p style="margin:0 0 6px;font-size:10px;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.08em">{{ d.label }}</p>
+                  <p style="margin:0;font-size:19px;font-weight:700;font-family:'JetBrains Mono',monospace;color:{{ d.color }};white-space:nowrap">{{ d.value }}</p>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px">
+          <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;padding:20px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px">
+              <h3 style="margin:0;font-size:15px;font-weight:600">Vendas ao longo do tempo</h3>
+              <span style="font-size:11px;color:#A1A1AA;font-family:'JetBrains Mono',monospace">14 dias</span>
+            </div>
+            <svg viewBox="0 0 520 120" style="width:100%;height:120px;display:block">
+              <polyline fill="none" stroke="#25F4EE" stroke-width="2" points="{{ soldPoints }}"></polyline>
+            </svg>
+          </div>
+          <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;padding:20px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px">
+              <h3 style="margin:0;font-size:15px;font-weight:600">Preço ao longo do tempo</h3>
+              <span style="font-size:11px;color:#A1A1AA;font-family:'JetBrains Mono',monospace">14 dias</span>
+            </div>
+            <svg viewBox="0 0 520 120" style="width:100%;height:120px;display:block">
+              <polyline fill="none" stroke="#FE2C55" stroke-width="2" points="{{ pricePoints }}"></polyline>
+            </svg>
+          </div>
+        </div>
+
+        <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;overflow:hidden">
+          <div style="padding:18px 20px;border-bottom:1px solid #2A2A32">
+            <h3 style="margin:0;font-size:15px;font-weight:600">Snapshots recentes</h3>
+          </div>
+          <table style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr style="background:#000">
+                <th style="text-align:left;padding:12px 20px;font-size:10.5px;font-weight:600;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.1em;border-bottom:1px solid #2A2A32">Capturado em</th>
+                <th style="text-align:right;padding:12px 20px;font-size:10.5px;font-weight:600;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.1em;border-bottom:1px solid #2A2A32">Preço</th>
+                <th style="text-align:right;padding:12px 20px;font-size:10.5px;font-weight:600;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.1em;border-bottom:1px solid #2A2A32">Vendidos</th>
+                <th style="text-align:right;padding:12px 20px;font-size:10.5px;font-weight:600;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.1em;border-bottom:1px solid #2A2A32">Rating</th>
+                <th style="text-align:right;padding:12px 20px;font-size:10.5px;font-weight:600;color:#A1A1AA;text-transform:uppercase;letter-spacing:0.1em;border-bottom:1px solid #2A2A32">Viral</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ snapshots }}" as="s" hint-placeholder-count="8">
+                <tr style="border-bottom:1px solid rgba(42,42,50,.6)" style-hover="background:#18181B">
+                  <td style="padding:12px 20px;font-size:12.5px;font-family:'JetBrains Mono',monospace">{{ s.at }}</td>
+                  <td style="padding:12px 20px;text-align:right;font-size:12.5px;color:#D4D4D8;font-family:'JetBrains Mono',monospace">{{ s.price }}</td>
+                  <td style="padding:12px 20px;text-align:right;font-size:12.5px;color:#D4D4D8;font-family:'JetBrains Mono',monospace">{{ s.sold }}</td>
+                  <td style="padding:12px 20px;text-align:right;font-size:12.5px;color:#EAB308;font-family:'JetBrains Mono',monospace">{{ s.rating }}</td>
+                  <td style="padding:12px 20px;text-align:right;font-size:12.5px;color:#FE2C55;font-family:'JetBrains Mono',monospace">{{ s.viral }}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:18px;padding-bottom:20px">
+          <h3 style="margin:0;font-size:16px;font-weight:700">Vídeos relacionados</h3>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px">
+            <sc-for list="{{ relatedVideos }}" as="v" hint-placeholder-count="4">
+              <div style="background:#121214;border:1px solid #2A2A32;border-radius:12px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:all .3s ease" style-hover="border-color:#3F3F46;transform:translateY(-2px)">
+                <div style="aspect-ratio:4/5;background:#27272A;position:relative;overflow:hidden">
+                  <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.8),transparent 60%);z-index:1"></div>
+                  <img src="{{ v.image }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" />
+                </div>
+                <div style="padding:16px;display:flex;flex-direction:column;gap:8px">
+                  <p style="margin:0;font-size:12px;font-weight:600;color:#25F4EE;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ v.author }}</p>
+                  <h3 style="margin:0;font-size:13.5px;font-weight:500;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ v.description }}</h3>
+                  <div style="padding-top:12px;border-top:1px solid rgba(42,42,50,.5);display:flex;justify-content:space-between;font-size:11.5px;gap:8px">
+                    <span style="color:#D4D4D8;white-space:nowrap">{{ v.viewsLabel }} views</span>
+                    <span style="color:#FE2C55;white-space:nowrap">♥ {{ v.likesLabel }}</span>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#25F4EE&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#25F4EE&quot;,&quot;#FE2C55&quot;,&quot;#A855F7&quot;,&quot;#FACC15&quot;],&quot;section&quot;:&quot;Aparência&quot;}}">
+const IMGS = [
+  'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=500&q=80',
+  'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=500&q=80',
+  'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=500&q=80',
+  'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=500&q=80',
+  'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=500&q=80',
+  'https://images.unsplash.com/photo-1593618998160-e34014e67546?w=500&q=80',
+  'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=500&q=80',
+  'https://images.unsplash.com/photo-1585338107529-13afc5f02586?w=500&q=80',
+];
+
+const PRODUCTS = [
+  { id: '1731979629535528736', title: 'Macaquinho Feminino Moda Gringa Fitness Macacão Gringo Zero Transparência', seller: 'KaluModaa', price: 35.99, sold: 1800, rating: 4.6, reviews: 412, viral: 8200 },
+  { id: '1731141729902954292', title: 'Conjunto Fitness de Academia Feminino Zero Transparência', seller: '80inove Fitness', price: 29.40, sold: 1100, rating: 4.6, reviews: 318, viral: 4900 },
+  { id: '1733321916641085214', title: 'Kit Halteres 6 Em 1 15/20/26Kg Musculação Ajustável Kettlebell', seller: 'Pluggei Select', price: 179.90, sold: 754, rating: 4.9, reviews: 201, viral: 3700 },
+  { id: '22535865205328834', title: 'Macaquinho Feminino Fitness Zero Transparência Academia', seller: 'La Vitória', price: 35.40, sold: 676, rating: 4.4, reviews: 158, viral: 3000 },
+  { id: '1732293036814337341', title: 'TOP VENDA Aparelho Abdominal Multifuncional | Base Ventosa', seller: 'AAKS BR', price: 36.99, sold: 608, rating: 4.7, reviews: 143, viral: 2900 },
+  { id: '1732648488332526683', title: 'Calça Legging Esportiva Yoga Tie Dye, Legging sem costura', seller: 'MIRELLE', price: 34.56, sold: 554, rating: 4.5, reviews: 97, viral: 2200 },
+  { id: '1735955960474339009', title: 'Kit Halteres Barra E Anilhas Musculação Kettlebell Ajustável', seller: 'LHP IMPORTS', price: 176.99, sold: 379, rating: 4.8, reviews: 88, viral: 1800 },
+  { id: '1734222741251589531', title: 'Kit Halter Ajustável 20/30kg 6 em 1 com Barra e Kettlebell', seller: 'Brave Bull Store', price: 208.00, sold: 344, rating: 4.9, reviews: 76, viral: 1700 },
+  { id: '1731700906534406134', title: 'Creatina Monohidratada Pura 1kg, 600g, 300g, 150g, 100g', seller: 'Dark Lab', price: 77.90, sold: 504, rating: 4.7, reviews: 132, viral: 1600 },
+  { id: '1731436273955997311', title: 'Regata Academia Feminina Fitness Alça Larga Poliamida Slim', seller: 'T All Store', price: 32.90, sold: 2100, rating: 4.6, reviews: 388, viral: 1500 },
+  { id: '1735664220224325072', title: 'Camisete Feminina Bailarina com Cabinha e Detalhes em Renda', seller: 'Lu Modas', price: 16.99, sold: 2000, rating: 4.5, reviews: 344, viral: 1400 },
+  { id: '1732078392739530399', title: 'Principe Gel de Limpeza Facial GL 03 com 200g | Peles Mistas', seller: 'PRINCIPE', price: 21.90, sold: 934, rating: 4.8, reviews: 210, viral: 1300 },
+  { id: '1733153356171281566', title: 'Camiseta Masculina Polo Poliamida Iconalizada Premium', seller: 'T All Store', price: 34.90, sold: 1400, rating: 4.7, reviews: 265, viral: 1250 },
+  { id: '1735243469055362774', title: 'Tamanco Feminino Plataforma EVA com Enfeites de Strass', seller: 'AVP Calçados', price: 14.99, sold: 2400, rating: 4.4, reviews: 501, viral: 1180 },
+  { id: '1735473440540231326', title: 'Camisa Polo Masculina em Tecido de Alta Qualidade', seller: 'Mundo Vestir', price: 30.18, sold: 2000, rating: 4.5, reviews: 297, viral: 1120 },
+  { id: '1735473440540231327', title: 'Kit Vitrine Especial de Bijuteria Camisola Branca', seller: 'Vitrine Feminina', price: 18.45, sold: 2200, rating: 4.6, reviews: 356, viral: 1050 },
+  { id: '1735473440540231328', title: 'Shorts saia Soltinho tipo bumbum confortável para academia', seller: 'Dama e Traça', price: 29.49, sold: 1100, rating: 4.5, reviews: 188, viral: 980 },
+  { id: '1735473440540231329', title: 'Conjunto 12 Potes Herméticos 800ml — Alta Vedação BPA Free', seller: 'Ver A Casa', price: 15.75, sold: 1200, rating: 4.6, reviews: 232, viral: 940 },
+  { id: '1735473440540231330', title: 'Shorts 2 em 1 DryFit VLD Original Fitness Academia Esporte', seller: 'SG CLOTHING', price: 28.99, sold: 2100, rating: 4.6, reviews: 401, viral: 900 },
+  { id: '1735473440540231331', title: 'Regata Feminina Fitness Dry com Alcinha Básica Poliamida', seller: 'La Vitória', price: 28.10, sold: 1900, rating: 4.4, reviews: 289, viral: 860 },
+  { id: '1735473440540231332', title: 'Camiseta de Compressão Masculina Premium Pro Lycra', seller: 'Norte Fitness', price: 31.99, sold: 1100, rating: 4.5, reviews: 176, viral: 820 },
+  { id: '1735473440540231333', title: 'Kit 6 Sun Vita Copo Térmico Água Squeeze com Adesivos', seller: 'Bonjour BR', price: 15.25, sold: 900, rating: 4.5, reviews: 141, viral: 780 },
+  { id: '1735473440540231334', title: 'Kit Halteres 6 Em 1 15/20/26Kg Musculação Ajustável Kettlebell', seller: 'Pluggei Select', price: 179.90, sold: 740, rating: 4.9, reviews: 190, viral: 740 },
+  { id: '1735473440540231335', title: 'Máquina Fotográfica Câmera Digital Retrô Infantil', seller: 'Kids House', price: 42.90, sold: 610, rating: 4.3, reviews: 98, viral: 700 },
+];
+
+const VIDEOS = [
+  { id: 'v1', author: '@achadinhosdacasabr_', description: '#tiktokshop #tiktokshopbr #cozinhar #achadinhos #receitas', productId: '1731979629535528736', views: 6000000, likes: 38000, viral: 6400000 },
+  { id: 'v2', author: '@zathtv', description: 'KIT de Faca Inox 6 Peças Com Cabo Reforçado Aço — adquira no link', productId: '1731141729902954292', views: 5400000, likes: 15400, viral: 5500000 },
+  { id: 'v3', author: '@peaoleo', description: 'Jogo de Cama Lençol Micropercal 400 fios #jogodecama #lençol', productId: '1733321916641085214', views: 2200000, likes: 13400, viral: 2300000 },
+  { id: 'v4', author: '@drip.verso', description: 'Dispenser forma de gelo #achadinhos #shopee #cozinha', productId: '22535865205328834', views: 1400000, likes: 20000, viral: 1900000 },
+  { id: 'v5', author: '@vicgostou', description: 'Você precisa de um kit desses na sua caixa de ferramentas e nem sabe', productId: '1732293036814337341', views: 1500000, likes: 13600, viral: 1700000 },
+  { id: 'v6', author: '@mare.gaab', description: 'Esse cropped azul é uma graça #modafeminina #look', productId: '1732648488332526683', views: 1400000, likes: 27100, viral: 1600000 },
+  { id: 'v7', author: '@bia.shopsp', description: 'o detalhe da corrente de coração me ganhou e ainda por cima', productId: '1735955960474339009', views: 752900, likes: 19100, viral: 940800 },
+  { id: 'v8', author: '@clariachadinhos', description: 'Sandália linda, confortável e baratinha! Quem ama...', productId: '1734222741251589531', views: 279200, likes: 20500, viral: 462700 },
+  { id: 'v9', author: '@user688762122326', description: '#tiktokshop #fyp', productId: '1731700906534406134', views: 243700, likes: 1800, viral: 259900 },
+  { id: 'v10', author: '@let22tiktokshop', description: '#tiktokshop #fyp #parati', productId: '1731436273955997311', views: 134600, likes: 1000, viral: 153800 },
+  { id: 'v11', author: '@gra3a42', description: '#tiktokshop #fyp', productId: '1735664220224325072', views: 65100, likes: 191, viral: 67200 },
+  { id: 'v12', author: '@user2957958314654', description: '#TikTokShopBR99 #tiktokshop #tiktokshopmademebuyit', productId: '1732078392739530399', views: 40600, likes: 740, viral: 50500 },
+  { id: 'v13', author: '@mariana.shp', description: 'Kit 30 Marmita Potes 800ml #tiktokshop #promocao', productId: '1733153356171281566', views: 43700, likes: 525, viral: 49700 },
+  { id: 'v14', author: '@amandasimukawa', description: '#tiktokshop #modafeminina', productId: '1735243469055362774', views: 4800, likes: 1400, viral: 15700 },
+  { id: 'v15', author: '@luana_cust', description: '#ViralTikTokShop #tiktokshop #base', productId: '1735473440540231326', views: 127, likes: 4, viral: 159 },
+];
+
+const RUNS = [
+  ['29/08/2026, 09:45:36', 'scrape_request', 30, 30, 'ok'],
+  ['29/08/2026, 06:30:17', 'discovery', 29, 29, 'ok'],
+  ['29/08/2026, 06:30:02', 'scheduled', 30, 30, 'ok'],
+  ['29/08/2026, 03:07:15', 'discovery', 60, 60, 'ok'],
+  ['29/08/2026, 02:01:31', 'local-test', 40, 15, 'ok'],
+  ['29/08/2026, 02:00:38', 'local-test', 40, 0, 'ok'],
+  ['29/08/2026, 01:53:45', 'video_collector_local_test', 0, 0, 'ok'],
+  ['29/08/2026, 01:07:31', 'scrape_request', 30, 30, 'ok'],
+  ['29/08/2026, 00:49:26', 'scrape_request', 29, 29, 'ok'],
+  ['29/08/2026, 00:39:42', 'scrape_request', 30, 30, 'ok'],
+  ['29/08/2026, 00:35:48', 'scrape_request', 29, 29, 'ok'],
+  ['29/08/2026, 00:31:49', 'scrape_request', 10, 10, 'ok'],
+  ['28/08/2026, 15:21:58', 'scrapecreators.shop.search', 7, 7, 'ok'],
+];
+
+const REQUESTS = [['achadinhos', 'done'], ['zorel', 'done'], ['copo', 'done'], ['copo verde', 'done']];
+
+const ICON = (n) => 'https://unpkg.com/lucide-static@0.451.0/icons/' + n + '.svg';
+
+function fmt(n) {
+  if (n == null) return '—';
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+  return String(n);
+}
+function brl(v) { return 'R$ ' + v.toFixed(2).replace('.', ','); }
+function points(values, w, h) {
+  const min = Math.min.apply(null, values);
+  const max = Math.max.apply(null, values);
+  const range = max - min || 1;
+  const step = w / Math.max(1, values.length - 1);
+  return values.map((v, i) => (i * step).toFixed(1) + ',' + (h - ((v - min) / range) * (h - 12) - 6).toFixed(1)).join(' ');
+}
+
+class Component extends DCLogic {
+  state = { page: 'overview', mode: 'viral', search: '', minSold: 0, minRating: 0, onlyWithProduct: true, detailId: PRODUCTS[0].id, prodPage: 1, vidPage: 1, lojaPage: 1 };
+
+  go = (page) => () => this.setState({ page });
+
+  pager(total, current, perPage, key) {
+    const totalPages = Math.max(1, Math.ceil(total / perPage));
+    const cur = Math.min(current, totalPages);
+    const set = (n) => () => this.setState({ [key]: Math.min(Math.max(1, n), totalPages) });
+    const nums = [];
+    for (let i = 1; i <= totalPages; i++) {
+      if (totalPages <= 7 || i === 1 || i === totalPages || Math.abs(i - cur) <= 1) nums.push(i);
+      else if (nums[nums.length - 1] !== '…') nums.push('…');
+    }
+    const from = total === 0 ? 0 : (cur - 1) * perPage + 1;
+    const to = Math.min(cur * perPage, total);
+    return {
+      show: totalPages > 1,
+      info: from + '–' + to + ' de ' + total,
+      prev: set(cur - 1),
+      next: set(cur + 1),
+      prevColor: cur === 1 ? '#3F3F46' : '#FFFFFF',
+      nextColor: cur === totalPages ? '#3F3F46' : '#FFFFFF',
+      pages: nums.map((n, i) => ({
+        label: String(n),
+        go: n === '…' ? () => {} : set(n),
+        bg: n === cur ? 'linear-gradient(90deg,#25F4EE,#FE2C55)' : 'transparent',
+        border: n === cur ? 'transparent' : '#2A2A32',
+        color: n === cur ? '#000000' : n === '…' ? '#52525B' : '#A1A1AA',
+        weight: n === cur ? '700' : '500',
+      })),
+      slice: (arr) => arr.slice((cur - 1) * perPage, cur * perPage),
+    };
+  }
+
+  card = (p, i) => ({
+    title: p.title,
+    seller: p.seller,
+    image: IMGS[PRODUCTS.indexOf(p) % IMGS.length],
+    rankLabel: '#' + (i + 1),
+    rankBg: i === 0 ? 'linear-gradient(90deg,#25F4EE,#FE2C55)' : 'rgba(39,39,42,0.8)',
+    rankBorder: i === 0 ? 'transparent' : '#52525B',
+    viralLabel: fmt(p.viral),
+    priceLabel: brl(p.price),
+    soldLabel: fmt(p.sold),
+    ratingLabel: p.rating.toFixed(1),
+    open: () => this.setState({ page: 'detail', detailId: p.id }),
+  });
+
+  video = (v, i) => ({
+    author: v.author,
+    description: v.description,
+    productId: v.productId,
+    image: IMGS[(VIDEOS.findIndex((x) => x.id === v.id) + 4) % IMGS.length],
+    viralLabel: fmt(v.viral),
+    viewsLabel: fmt(v.views),
+    likesLabel: fmt(v.likes),
+  });
+
+  renderVals() {
+    const s = this.state;
+    const accent = this.props.accent ?? '#25F4EE';
+
+    const navDefs = [
+      ['overview', 'Visão geral', 'layout-dashboard'],
+      ['produtos', 'Produtos', 'shopping-bag'],
+      ['videos', 'Vídeos virais', 'video'],
+      ['lojas', 'Lojas', 'store'],
+      ['sistema', 'Sistema', 'settings'],
+    ];
+    const activePage = s.page === 'detail' ? 'produtos' : s.page;
+    const nav = navDefs.map(([key, label, icon]) => ({
+      label, go: this.go(key), icon: ICON(icon),
+      bg: activePage === key ? '#121214' : 'transparent',
+      border: activePage === key ? '#2A2A32' : 'transparent',
+      color: activePage === key ? '#FFFFFF' : '#A1A1AA',
+      iconColor: activePage === key ? accent : '#A1A1AA',
+    }));
+
+    const modeDefs = [['viral', 'Em alta'], ['sold', 'Mais vendidos'], ['rating', 'Melhores avaliados'], ['withVideos', 'Com vídeos virais']];
+    const modes = modeDefs.map(([key, label]) => ({
+      label,
+      select: () => this.setState({ mode: key, prodPage: 1 }),
+      bg: s.mode === key ? '#121214' : 'transparent',
+      border: s.mode === key ? '#3F3F46' : '#2A2A32',
+      color: s.mode === key ? '#FFFFFF' : '#A1A1AA',
+    }));
+
+    const videoProductIds = new Set(VIDEOS.map((v) => v.productId));
+    let list = PRODUCTS.filter((p) => p.sold >= s.minSold && p.rating >= s.minRating);
+    if (s.search.trim()) {
+      const terms = s.search.toLowerCase().split(',').map((t) => t.trim()).filter(Boolean);
+      list = list.filter((p) => terms.some((t) => p.title.toLowerCase().includes(t) || p.seller.toLowerCase().includes(t)));
+    }
+    if (s.mode === 'sold') list = list.slice().sort((a, b) => b.sold - a.sold);
+    else if (s.mode === 'rating') list = list.slice().sort((a, b) => b.rating - a.rating);
+    else if (s.mode === 'withVideos') list = list.filter((p) => videoProductIds.has(p.id));
+    else list = list.slice().sort((a, b) => b.viral - a.viral);
+
+    const sellerMap = new Map();
+    PRODUCTS.forEach((p) => {
+      const cur = sellerMap.get(p.seller) || { name: p.seller, n: 0, sold: 0, priceSum: 0 };
+      cur.n += 1; cur.sold += p.sold; cur.priceSum += p.price;
+      sellerMap.set(p.seller, cur);
+    });
+    const sellers = [...sellerMap.values()].sort((a, b) => b.sold - a.sold).map((x) => ({
+      name: x.name, productCount: String(x.n), soldLabel: fmt(x.sold), avgPrice: brl(x.priceSum / x.n),
+    }));
+
+    const p = PRODUCTS.find((x) => x.id === s.detailId) || PRODUCTS[0];
+    const soldSeries = Array.from({ length: 14 }, (_, i) => Math.round(p.sold * (0.55 + 0.45 * (i / 13)) + (i % 3) * p.sold * 0.012));
+    const priceSeries = Array.from({ length: 14 }, (_, i) => p.price * (1 + (i % 4 === 0 ? 0.06 : i % 3 === 0 ? -0.03 : 0.01)));
+    const snapshots = soldSeries.slice().reverse().slice(0, 8).map((v, i) => ({
+      at: String(29 - i).padStart(2, '0') + '/08/2026, 06:30',
+      price: brl(priceSeries[13 - i]),
+      sold: fmt(v),
+      rating: p.rating.toFixed(1),
+      viral: fmt(Math.round(p.viral * (1 - i * 0.06))),
+    }));
+
+    const videos = s.onlyWithProduct ? VIDEOS : VIDEOS.concat(VIDEOS.slice(0, 6));
+    const totalViews = VIDEOS.reduce((a, v) => a + v.views, 0);
+    const totalLikes = VIDEOS.reduce((a, v) => a + v.likes, 0);
+
+    const prodPager = this.pager(list.length, s.prodPage, 12, 'prodPage');
+    const vidPager = this.pager(videos.length, s.vidPage, 12, 'vidPage');
+    const lojaPager = this.pager(sellers.length, s.lojaPage, 10, 'lojaPage');
+    const pagedProducts = prodPager.slice(list);
+    const pagedVideos = vidPager.slice(videos);
+    const pagedSellers = lojaPager.slice(sellers);
+
+    return {
+      isOverview: s.page === 'overview',
+      isProdutos: s.page === 'produtos',
+      isVideos: s.page === 'videos',
+      isLojas: s.page === 'lojas',
+      isSistema: s.page === 'sistema',
+      isDetail: s.page === 'detail',
+      nav, modes, snapshots,
+      sellers: pagedSellers,
+      goProdutos: this.go('produtos'),
+      goVideos: this.go('videos'),
+      overviewStats: [
+        { label: 'Produtos monitorados', value: '235', sub: '', bar: '#3F3F46' },
+        { label: 'Novos produtos (24h)', value: '235', sub: '', bar: accent },
+        { label: 'Vídeos com produto', value: '15', sub: '', bar: '#FE2C55' },
+        { label: 'Última atualização', value: '29/08', sub: '09:45:36', bar: '#3F3F46' },
+      ],
+      produtosStats: [
+        { label: 'Produtos únicos', value: '235', sub: '', bar: accent },
+        { label: 'Runs registradas', value: '13', sub: '', bar: '#3F3F46' },
+        { label: 'Última coleta', value: '29/08', sub: '09:45:36', bar: '#FE2C55' },
+      ],
+      topProducts: PRODUCTS.slice().sort((a, b) => b.viral - a.viral).slice(0, 8).map(this.card),
+      topVideos: VIDEOS.slice(0, 8).map(this.video),
+      allVideos: pagedVideos.map(this.video),
+      listProducts: pagedProducts.map((p, i) => this.card(p, (s.prodPage - 1) * 12 + i)),
+      hasResults: list.length > 0,
+      noResults: list.length === 0,
+      filterCount: list.length + ' de ' + PRODUCTS.length,
+      videoCountLabel: videos.length + ' vídeo(s)',
+      totalViews: fmt(totalViews),
+      totalLikes: fmt(totalLikes),
+      onlyWithProduct: s.onlyWithProduct,
+      toggleOnlyProduct: (e) => this.setState({ onlyWithProduct: e.target.checked, vidPage: 1 }),
+      onSearch: (e) => this.setState({ search: e.target.value, prodPage: 1 }),
+      onMinSold: (e) => this.setState({ minSold: Number(e.target.value) || 0, prodPage: 1 }),
+      onMinRating: (e) => this.setState({ minRating: Number(e.target.value) || 0, prodPage: 1 }),
+      prodPager, vidPager, lojaPager,
+      requests: REQUESTS.map(([label, status]) => ({ label: label + ' · ' + status, color: status === 'done' ? '#4ADE80' : '#EAB308' })),
+      runs: RUNS.map(([startedAt, source, found, saved, status]) => ({ startedAt, source, found: String(found), saved: String(saved), status })),
+      detail: {
+        id: p.id, title: p.title, seller: p.seller,
+        image: IMGS[PRODUCTS.indexOf(p) % IMGS.length],
+      },
+      detailStats: [
+        { label: 'Vendidos', value: fmt(p.sold), color: '#FFFFFF' },
+        { label: 'Preço', value: brl(p.price), color: '#FFFFFF' },
+        { label: 'Rating', value: p.rating.toFixed(1) + '★', color: '#EAB308' },
+        { label: 'Reviews', value: fmt(p.reviews), color: '#FFFFFF' },
+        { label: 'Viral', value: fmt(p.viral), color: '#FE2C55' },
+      ],
+      soldPoints: points(soldSeries, 520, 120),
+      pricePoints: points(priceSeries, 520, 120),
+      relatedVideos: VIDEOS.slice(0, 4).map(this.video),
+    };
+  }
+}
+</script>
+</body>
+</html>
