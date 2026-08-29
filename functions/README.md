@@ -58,3 +58,10 @@ gcloud projects add-iam-policy-binding <PROJECT_ID> \
   --member="serviceAccount:<conta-que-faz-o-deploy>@<PROJECT_ID>.iam.gserviceaccount.com" \
   --role="roles/editor"
 ```
+
+Por fim, o Cloud Functions checa o billing do projeto — se a API `cloudbilling.googleapis.com`
+nunca foi usada, habilite:
+
+```
+gcloud services enable cloudbilling.googleapis.com --project=<PROJECT_ID>
+```
