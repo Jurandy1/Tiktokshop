@@ -40,3 +40,21 @@ gcloud projects add-iam-policy-binding <PROJECT_ID> \
 
 Isso vale tanto pra quem roda `firebase deploy` manual quanto pra service
 account usada no secret `FIREBASE_SERVICE_ACCOUNT` do GitHub Actions.
+
+Além disso, a service account do deploy também precisa poder habilitar/checar
+as APIs do Google Cloud usadas (Cloud Build, Artifact Registry, Eventarc,
+Pub/Sub, Cloud Scheduler) — sem isso o deploy falha com:
+
+```
+Error: Cloud Functions deployment requires the Cloud Build API to be enabled.
+The current credentials do not have permission to enable APIs for project ...
+```
+
+Mais simples de resolver dando `roles/editor` na service account do deploy
+(mesmo nível que as service accounts padrão do projeto já têm):
+
+```
+gcloud projects add-iam-policy-binding <PROJECT_ID> \
+  --member="serviceAccount:<conta-que-faz-o-deploy>@<PROJECT_ID>.iam.gserviceaccount.com" \
+  --role="roles/editor"
+```
