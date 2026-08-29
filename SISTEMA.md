@@ -1,26 +1,30 @@
 # Sistema TikTok Shop — arquitetura
 
-## Componentes
+## Componentes (100% online — nada depende do PC ligado)
 
 | Peça | Onde roda | O que faz |
 |---|---|---|
-| **Scraper base** (`sync-viral-v2`) | Seu PC (Windows) | Puxa produtos BR via ScrapeCreators (1 crédito/query) e salva no Firestore |
-| **Enrichment** (`browser-proxy`) | Seu PC + Chrome debug 9222 | Puxa reviews + more_from via CDP (0 créditos) |
-| **Firestore** | Firebase Cloud | Guarda `products/`, `snapshots/`, `daily/`, `runs/` |
+| **`scheduledSync`** (Cloud Function) | Firebase Cloud Functions, a cada 6h | Puxa produtos BR via ScrapeCreators `shop/search` (1 crédito/query) e salva no Firestore — preço, mais vendidos, melhores avaliados |
+| **`onScrapeRequest`** (Cloud Function) | Firebase Cloud Functions, gatilho Firestore | Dispara a mesma coleta na hora quando o dashboard pede "Coletar agora" |
+| **`scheduledVideoSync`** (Cloud Function) | Firebase Cloud Functions, 1x/dia | Puxa vídeos por hashtag via ScrapeCreators `search/hashtag` (1 crédito/hashtag), extrai o produto vinculado (anchors/commerce_info do próprio TikTok) e salva em `videos/` já com score de viral |
+| **Firestore** | Firebase Cloud | Guarda `products/`, `snapshots/`, `daily/`, `videos/`, `runs/` |
 | **Dashboard** | Firebase Hosting | React lendo Firestore, protegido por Auth (só seu email) |
-| **GitHub Actions** | GitHub | Faz `firebase deploy --only hosting` a cada push na `main` |
+| **GitHub Actions** | GitHub | `firebase deploy --only hosting` (dashboard) e `--only functions` (Cloud Functions) a cada push na `main` |
+
+Ferramentas **só para uso local/debug**, não fazem parte do caminho de produção: `npm run sync:v2:full --enrich N` (precisa de Chrome debug 9222) e `npm run watcher` (fallback caso as Cloud Functions estejam indisponíveis). Ver `scripts/mapeamento-realidade.md`.
 
 ## Fluxo diário
 
 ```
-Você → npm run sync:v2:full  ←  no PC, quando quiser coletar
-        │
-        ├─ ScrapeCreators (1 crédito/query BR)
-        ├─ Chrome debug 9222 (enriquece top N)
-        └─ firestore write (products/snapshots/daily)
+Cloud Scheduler → scheduledSync (a cada 6h)      ──┐
+Dashboard "Coletar agora" → onScrapeRequest        ├─→ ScrapeCreators shop/search → Firestore (products/)
+                                                     │
+Cloud Scheduler → scheduledVideoSync (1x/dia) ──────┴─→ ScrapeCreators search/hashtag → Firestore (videos/)
 
-Você → https://tiktokshop-cb657.web.app  ←  ver os dados no navegador
+Você → https://tiktokshop-cb657.web.app  ←  ver os dados no navegador, sem precisar rodar nada
 ```
+
+**Por que vídeo também usa ScrapeCreators e não sessão anônima própria**: testamos de verdade (headless + sessão anônima, sem login) e o TikTok simplesmente não serve mais lista de vídeos de hashtag pra quem não está logado — nem a API assinada, nem o HTML da página trazem os dados, mesmo com a região BR detectada corretamente. Não é bloqueio de IP, é a própria plataforma escondendo esse conteúdo de sessões anônimas. O ScrapeCreators (que já usamos pra produtos) resolve isso do lado deles e devolve os vídeos com o `productId` real vindo direto dos campos de comércio do TikTok (`anchors`/`commerce_info`) — ver `functions/src/video-core.js`.
 
 ## Setup one-shot (fazer 1x)
 
@@ -80,19 +84,27 @@ firebase init hosting:github
 ```
 (o CLI cria a service account e o secret automaticamente)
 
+### 6. Deploy das Cloud Functions (1x, depois é automático)
+
+Pré-requisito: projeto no plano **Blaze** (pay-as-you-go) — Cloud Functions/Cloud Scheduler exigem isso.
+
+```
+firebase functions:secrets:set SCRAPECREATORS_API_KEY
+firebase deploy --only functions
+```
+
+As três functions (`scheduledSync`, `onScrapeRequest`, `scheduledVideoSync`) são leves — sem browser, sem Docker, sem Cloud Run. Depois do primeiro deploy manual, os pushes na `main` que tocarem `functions/**` já disparam `.github/workflows/deploy-functions.yml` sozinhos.
+
 ## Uso no dia-a-dia
 
-**Coletar produtos + enriquecer top 5 + salvar:**
+**Não precisa fazer nada** — `scheduledSync` roda sozinha a cada 6h e `scheduledVideoSync` 1x/dia. O botão "Coletar agora" no dashboard também já dispara a Cloud Function na hora.
+
+**Só pra debug local (opcional, precisa de Chrome aberto):**
 ```
 scripts\abrir-chrome-debug.cmd tiktokshop
 ```
 ```
 npm run sync:v2:full
-```
-
-**Só descoberta rápida (sem enrichment):**
-```
-npm run sync:v2:save
 ```
 
 **Ver no dashboard:** `https://tiktokshop-cb657.web.app`
@@ -110,9 +122,9 @@ git add . && git commit -m "..." && git push
 
 ## Custo mensal estimado
 
-- **ScrapeCreators**: 100 créditos free (agora 95). US$47 quando quiser mais 25k.
-- **Firebase**: ~US$1,50 (bem dentro do free tier)
+- **ScrapeCreators**: ~8 créditos/dia de produtos (`scheduledSync` a cada 6h × 2 queries) + ~2 créditos/dia de vídeo (`scheduledVideoSync` × 2 hashtags) ≈ 300/mês. 100 créditos free, US$47 quando quiser mais 25k.
+- **Firebase Cloud Functions** (as 3 functions, todas leves, sem browser): centenas de execuções curtas/mês, dentro do free tier do Blaze na prática.
+- **Firebase Firestore/Hosting**: ~US$1,50 (bem dentro do free tier)
 - **GitHub Actions**: gratuito (repo público) ou 2000 min/mês (privado)
-- **Firebase Hosting**: gratuito no free tier (10GB/mês)
 
-**Total real: US$0 enquanto usar os créditos gratuitos.**
+**Total real esperado: poucos dólares/mês, a maior parte dentro do free tier do Blaze.** O plano Blaze cobra só o que passar do free tier — vale acompanhar o billing do projeto nas primeiras semanas.

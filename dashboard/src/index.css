@@ -39,6 +39,9 @@ header {
 header h1 { margin: 0; font-size: 1.4rem; }
 header h1 a { color: var(--text); }
 .header-right { display: flex; gap: 12px; align-items: center; }
+.header-nav { display: flex; gap: 16px; }
+.header-nav a { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
+.header-nav a:hover { color: var(--text); }
 
 .loading { padding: 60px; text-align: center; color: var(--muted); }
 

@@ -72,6 +72,30 @@ export async function fetchTopViral(topN = 30) {
     .slice(0, topN);
 }
 
+/** Top N produtos por mais vendidos (ranking global, não só janela recente). */
+export async function fetchTopBySold(topN = 30) {
+  if (!db) return [];
+  try {
+    const q = query(collection(db, 'products'), orderBy('lastSoldCount', 'desc'), limit(topN));
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => mapProduct(d));
+  } catch {
+    return [];
+  }
+}
+
+/** Top N produtos por melhor avaliação (ranking global, não só janela recente). */
+export async function fetchTopByRating(topN = 30) {
+  if (!db) return [];
+  try {
+    const q = query(collection(db, 'products'), orderBy('lastRating', 'desc'), limit(topN));
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => mapProduct(d));
+  } catch {
+    return [];
+  }
+}
+
 /** Detalhes de UM produto + histórico. */
 export async function fetchProductDetail(productId) {
   if (!db) return null;

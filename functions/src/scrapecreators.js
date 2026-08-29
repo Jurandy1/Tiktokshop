@@ -1,16 +1,15 @@
 /**
+ * Cópia de src/collectors/scrapecreators.js para dentro de functions/.
+ *
+ * Por quê a cópia (e não um import relativo pra ../../src/...): o deploy do
+ * Firebase Cloud Functions empacota só o conteúdo de functions/ — qualquer
+ * import que aponte pra fora dessa pasta funciona no emulador (que roda
+ * direto no disco local) mas quebra em produção (o zip enviado pro Cloud
+ * Build não inclui ../src). Ver README.md em functions/.
+ *
  * Cliente ScrapeCreators — TikTok Shop.
- *
- * Endpoints cobertos (todos custam 1 crédito):
- *   - GET /v1/tiktok/shop/search    → busca produtos por keyword+região
- *   - GET /v1/tiktok/shop/products  → lista produtos de uma LOJA específica
- *   - GET /v1/tiktok/product        → detalhes + related_videos (afiliados)
- *   - GET /v1/tiktok/search/hashtag → vídeos por hashtag
- *
- * Chave: env SCRAPECREATORS_API_KEY. Nunca hard-code aqui.
+ * Chave: env/secret SCRAPECREATORS_API_KEY.
  */
-import 'dotenv/config';
-
 const BASE = 'https://api.scrapecreators.com';
 const HEADER_KEY = 'x-api-key';
 const DEFAULT_REGION = 'BR';
@@ -18,9 +17,7 @@ const DEFAULT_REGION = 'BR';
 function apiKey() {
   const key = process.env.SCRAPECREATORS_API_KEY;
   if (!key) {
-    throw new Error(
-      'SCRAPECREATORS_API_KEY não definida. Crie .env com SCRAPECREATORS_API_KEY=...'
-    );
+    throw new Error('SCRAPECREATORS_API_KEY não definida (functions:secrets:set).');
   }
   return key;
 }
@@ -65,28 +62,15 @@ export function shopSearch(query, { region = DEFAULT_REGION, page } = {}) {
   return call('/v1/tiktok/shop/search', { query, region, page });
 }
 
-/** Lista produtos de uma LOJA específica (precisa URL da loja). */
-export function shopProducts(storeUrl, { region = DEFAULT_REGION, sort_by, cursor } = {}) {
-  return call('/v1/tiktok/shop/products', { url: storeUrl, region, sort_by, cursor });
-}
-
-/** Detalhes de UM produto (aceita URL de PDP). Inclui related_videos com creators afiliados. */
-export function product(pdpUrl, { region = DEFAULT_REGION } = {}) {
-  return call('/v1/tiktok/product', { url: pdpUrl, region });
-}
-
-/** Vídeos por hashtag (não é Shop-específico — vídeos gerais). */
+/** Busca vídeos por hashtag (retorna aweme_list — vídeos gerais, com ou sem produto). */
 export function searchHashtag(hashtag, { region = DEFAULT_REGION } = {}) {
   return call('/v1/tiktok/search/hashtag', { hashtag, region });
 }
 
 /**
  * O endpoint shop/search devolve os preços em CENTAVOS como string
- * (ex: "1725" = R$17,25) — `sale_price_decimal`/`origin_price_decimal`
- * apesar do nome não são um decimal já formatado. Confirmado comparando
- * vários produtos: dividir por 100 é o que bate com preços reais de mercado
- * (ex: um copo térmico com 137 mil vendas custando R$31,99 é plausível;
- * R$3.199 não seria).
+ * (ex: "1725" = R$17,25) — ver src/collectors/scrapecreators.js pra a
+ * explicação completa de como isso foi confirmado.
  */
 function centsToReais(raw) {
   if (raw == null || raw === '') return null;
@@ -101,7 +85,6 @@ function formatBRL(n) {
 
 /**
  * Normaliza um produto do endpoint shop/search pro schema local.
- * Deixa o formato pronto pra virar snapshot no Firestore.
  */
 export function normalizeSearchProduct(raw) {
   const priceInfo = raw.product_price_info || {};

@@ -1,60 +1,30 @@
 /**
- * Firestore writer com schema em camadas:
+ * Cópia simplificada de src/db/firebase.js pra dentro de functions/ (ver nota
+ * de empacotamento em functions/src/scrapecreators.js). Aqui não existe
+ * caminho "local" — a function sempre roda como Cloud Function, então
+ * initializeApp() sempre usa credenciais automáticas (ADC).
  *
- *   products/{productId}                        ← campos estáveis (title, images, seller)
- *   products/{productId}/snapshots/{tsIso}      ← série temporal (price, sold, viralScore)
- *   products/{productId}/daily/{YYYY-MM-DD}     ← agregado diário (nunca expira)
+ * Mesmo schema em camadas do projeto:
+ *   products/{productId}                        ← campos estáveis
+ *   products/{productId}/snapshots/{tsIso}      ← série temporal
+ *   products/{productId}/daily/{YYYY-MM-DD}     ← agregado diário
  *   videos/{videoId}                            ← metadados estáveis
  *   videos/{videoId}/snapshots/{tsIso}          ← série temporal
  *   runs/{runId}                                ← metadata da execução
- *
- * Regras:
- *   - Grava sempre via admin SDK (bypassa rules)
- *   - Snapshots levam `expireAt` (TTL 90d configurado no console)
- *   - Daily agregado é atualizado com FieldValue.increment no mesmo batch
- *
- * Compatibilidade retro: `saveProductsToFirebase` (usado por sync-most-viral)
- * continua funcionando — internamente escreve nas 3 coleções novas.
  */
-import { readFileSync, existsSync } from 'fs';
-import { config } from '../config.js';
-
 let db = null;
 let FieldValue = null;
 const TTL_DAYS_SNAPSHOTS = 90;
 
-/**
- * true quando rodando dentro de uma Cloud Function/Cloud Run (2ª geração) —
- * nesses runtimes a identidade do serviço é automática (ADC), não precisa de
- * arquivo de service account.
- */
-function isCloudFunctionRuntime() {
-  return Boolean(process.env.K_SERVICE || process.env.FUNCTION_TARGET);
-}
-
-export function isFirebaseConfigured() {
-  if (isCloudFunctionRuntime()) return true;
-  return Boolean(config.firebase.serviceAccountPath && existsSync(config.firebase.serviceAccountPath));
-}
-
 export async function initFirebase() {
   if (db) return db;
 
-  const { initializeApp, cert, getApps } = await import('firebase-admin/app');
+  const { initializeApp, getApps } = await import('firebase-admin/app');
   const firestoreModule = await import('firebase-admin/firestore');
   FieldValue = firestoreModule.FieldValue;
 
   if (getApps().length === 0) {
-    if (isCloudFunctionRuntime()) {
-      initializeApp();
-    } else {
-      const accountPath = config.firebase.serviceAccountPath;
-      if (!accountPath || !existsSync(accountPath)) {
-        throw new Error(`Service account não encontrado: ${accountPath}`);
-      }
-      const serviceAccount = JSON.parse(readFileSync(accountPath, 'utf-8'));
-      initializeApp({ credential: cert(serviceAccount) });
-    }
+    initializeApp();
   }
 
   db = firestoreModule.getFirestore();
@@ -70,7 +40,7 @@ function todayIso() {
 }
 
 function snapshotDocId(iso = nowIso()) {
-  return iso.replace(/[:.]/g, '-'); // ISO válido como docId
+  return iso.replace(/[:.]/g, '-');
 }
 
 function ttlDate(days = TTL_DAYS_SNAPSHOTS) {
@@ -83,10 +53,6 @@ function stripUndefined(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-/**
- * Separa dados estáveis (do produto) dos voláteis (do snapshot).
- * Aceita tanto o formato antigo (achatado) quanto o novo (do scrapecreators.normalizeSearchProduct).
- */
 export function splitProductPayload(product) {
   const priceObj = typeof product.price === 'object' ? product.price : null;
   const salePrice = priceObj?.sale ?? product.price ?? null;
@@ -104,7 +70,6 @@ export function splitProductPayload(product) {
     seller: product.seller || product.shop || null,
     category: product.category || product.category_breadcrumb || null,
     lastSeenAt: nowIso(),
-    // Campos denormalizados pro dashboard ler sem subcollection
     lastViralScore: product.viralScore ?? null,
     lastSoldCount: product.soldCount ?? null,
     lastPrice: salePrice,
@@ -135,12 +100,6 @@ export function splitProductPayload(product) {
   return { stable, snapshot };
 }
 
-/**
- * Grava UM produto:
- *   - upsert no products/{id} (merge, mantém firstSeenAt)
- *   - novo doc em snapshots/{ts}
- *   - increment no daily/{YYYY-MM-DD}
- */
 export async function upsertProductWithSnapshot(product, { runId } = {}) {
   const firestore = await initFirebase();
   const { stable, snapshot } = splitProductPayload(product);
@@ -177,39 +136,6 @@ export async function upsertProductWithSnapshot(product, { runId } = {}) {
   return { productId, snapshotId: snapRef.id };
 }
 
-/** Compat: escreve N produtos + registra run doc. */
-export async function saveProductsToFirebase(products, meta = {}) {
-  await initFirebase();
-  const runId = meta.runId || `run-${Date.now()}`;
-  const results = [];
-
-  for (const product of products) {
-    if (!product?.productId) continue;
-    try {
-      const r = await upsertProductWithSnapshot(product, { runId });
-      results.push(r);
-    } catch (err) {
-      results.push({ productId: product.productId, error: err.message });
-    }
-  }
-
-  await saveRun({
-    runId,
-    source: meta.source || 'unknown',
-    productsFound: results.length,
-    errors: results.filter((r) => r.error).map((r) => ({ productId: r.productId, error: r.error })),
-    finishedAt: nowIso(),
-    ...meta,
-  });
-
-  return {
-    runId,
-    collection: 'products',
-    savedIds: results.filter((r) => !r.error).map((r) => r.productId),
-    errors: results.filter((r) => r.error),
-  };
-}
-
 /** Grava/atualiza um vídeo + snapshot. */
 export async function upsertVideoWithSnapshot(video, { runId } = {}) {
   const firestore = await initFirebase();
@@ -229,7 +155,6 @@ export async function upsertVideoWithSnapshot(video, { runId } = {}) {
     coverUrl: video.coverUrl || null,
     hashtag: video.hashtag || null,
     lastSeenAt: nowIso(),
-    // Denormalizado pro dashboard ler sem precisar de subcollection (mesmo padrão de products)
     lastPlayCount: video.stats?.playCount ?? null,
     lastLikeCount: video.stats?.diggCount ?? null,
     lastCommentCount: video.stats?.commentCount ?? null,
@@ -249,11 +174,7 @@ export async function upsertVideoWithSnapshot(video, { runId } = {}) {
   });
 
   const batch = firestore.batch();
-  batch.set(
-    videoRef,
-    { ...stable, firstSeenAt: FieldValue.serverTimestamp() },
-    { merge: true }
-  );
+  batch.set(videoRef, { ...stable, firstSeenAt: FieldValue.serverTimestamp() }, { merge: true });
   batch.set(snapRef, snapshot);
   await batch.commit();
 

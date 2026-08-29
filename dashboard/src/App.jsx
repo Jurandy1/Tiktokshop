@@ -5,6 +5,7 @@ import { watchAuth, logout } from './lib/auth';
 import LoginGate from './components/LoginGate';
 import Home from './pages/Home';
 import Product from './pages/Product';
+import Videos from './pages/Videos';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -37,6 +38,10 @@ export default function App() {
       <div className="app">
         <header>
           <h1><Link to="/">TikTok Shop</Link></h1>
+          <nav className="header-nav">
+            <Link to="/">Produtos</Link>
+            <Link to="/videos">Vídeos</Link>
+          </nav>
           <div className="header-right">
             <span className="muted small">{user.email}</span>
             <button className="btn ghost" onClick={logout}>Sair</button>
@@ -45,6 +50,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/product/:id" element={<Product />} />
+          <Route path="/videos" element={<Videos />} />
         </Routes>
       </div>
     </BrowserRouter>

@@ -1,4 +1,21 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "videos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "productId", "order": "ASCENDING" },
+        { "fieldPath": "lastSeenAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "videos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "productKnown", "order": "ASCENDING" },
+        { "fieldPath": "lastViralScore", "order": "DESCENDING" }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }

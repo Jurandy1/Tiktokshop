@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 
 /**
- * Watcher local: escuta a coleção `scrape_requests` no Firestore e dispara
- * o pipeline sync-viral-v2 quando um novo pedido aparece (do dashboard).
+ * Watcher local — NÃO É MAIS NECESSÁRIO EM PRODUÇÃO.
+ *
+ * A Cloud Function `onScrapeRequest` (functions/src/on-scrape-request.js) já
+ * escuta `scrape_requests` e roda a coleta na nuvem. Este script continua
+ * aqui só como fallback pra testar localmente sem depender de deploy, ou
+ * pra rodar `--enrich` (que precisa de Chrome debug local e nunca vai rodar
+ * na nuvem).
  *
  * Rode continuamente no PC:
  *   npm run watcher
- *
- * Vai ficar em background. Chrome debug precisa estar aberto se algum
- * request tiver enrich > 0.
  */
 import { spawn } from 'child_process';
 import { dirname, join } from 'path';

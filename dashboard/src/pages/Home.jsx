@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { fetchTopViral, fetchCounts, fetchRecentRuns } from '../lib/products';
-import { requestScrape, watchRecentRequests } from '../lib/scrape-requests';
+import { requestScrape, watchRecentRequests, watchRequest } from '../lib/scrape-requests';
 import ProductCard from '../components/ProductCard';
 
 function fmt(n) {
@@ -27,9 +27,12 @@ export default function Home() {
 
   const [requests, setRequests] = useState([]);
   const [queueQueries, setQueueQueries] = useState('achadinhos,tiktokshop');
-  const [queueEnrich, setQueueEnrich] = useState(5);
+  const [queueEnrich, setQueueEnrich] = useState(0);
   const [queueBusy, setQueueBusy] = useState(false);
   const [queueMsg, setQueueMsg] = useState(null);
+  // Guarda a request que acabamos de enfileirar nesta sessão, pra saber quando
+  // ela terminar e filtrar a lista só pros resultados dessa busca.
+  const [pendingRequest, setPendingRequest] = useState(null); // { id, queries }
 
   async function load() {
     setLoading(true);
@@ -63,15 +66,38 @@ export default function Home() {
     return () => unsub();
   }, []);
 
+  // Quando a request que a gente enfileirou termina, recarrega e já filtra
+  // a lista pros termos dessa busca — sem isso o resultado fica misturado e
+  // enterrado entre os produtos de buscas antigas, ordenados por popularidade.
+  // Observa o doc específico (não a lista das 5 mais recentes) — se outra
+  // aba/pessoa enfileirar junto, a nossa request pode "sair" dessa janela
+  // antes de terminar.
+  useEffect(() => {
+    if (!pendingRequest) return;
+    const unsub = watchRequest(pendingRequest.id, (data) => {
+      if (data?.status === 'done') {
+        setPendingRequest(null);
+        setSearch(pendingRequest.queries.join(', '));
+        load();
+      } else if (data?.status === 'error') {
+        setPendingRequest(null);
+      }
+    });
+    return () => unsub();
+  }, [pendingRequest]);
+
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
+    const terms = search
+      .split(',')
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean);
     let out = products.filter((p) => (p.soldCount ?? 0) >= minSold);
-    if (q) {
-      out = out.filter(
-        (p) =>
-          (p.title || '').toLowerCase().includes(q) ||
-          (p.seller?.name || '').toLowerCase().includes(q)
-      );
+    if (terms.length) {
+      out = out.filter((p) => {
+        const title = (p.title || '').toLowerCase();
+        const seller = (p.seller?.name || '').toLowerCase();
+        return terms.some((t) => title.includes(t) || seller.includes(t));
+      });
     }
     out.sort((a, b) => {
       const va = a[sortBy === 'viral' ? 'viralScore' : sortBy === 'sold' ? 'soldCount' : sortBy === 'rating' ? 'rating' : 'price'] || 0;
@@ -84,12 +110,11 @@ export default function Home() {
   async function onQueue() {
     setQueueBusy(true);
     setQueueMsg(null);
+    const queries = queueQueries.split(',').map((s) => s.trim()).filter(Boolean);
     try {
-      const id = await requestScrape({
-        queries: queueQueries.split(',').map((s) => s.trim()).filter(Boolean),
-        enrich: Number(queueEnrich) || 0,
-      });
-      setQueueMsg({ ok: true, text: `Enfileirada ${id}. Se o watcher estiver rodando no PC, roda em segundos.` });
+      const id = await requestScrape({ queries, enrich: Number(queueEnrich) || 0 });
+      setPendingRequest({ id, queries });
+      setQueueMsg({ ok: true, text: `Enfileirada ${id}. Assim que terminar, a lista já filtra pra essa busca.` });
     } catch (err) {
       setQueueMsg({ ok: false, text: err.message });
     } finally {
@@ -130,8 +155,8 @@ export default function Home() {
           <div>
             <h2>Coletar agora</h2>
             <p className="muted small">
-              Manda a request pro Firestore. Se <code>npm run watcher</code> tiver
-              rodando no PC, ele coleta e salva sozinho.
+              Manda a request pro Firestore. Uma Cloud Function dispara a coleta
+              automaticamente — não precisa nada rodando no seu PC.
             </p>
           </div>
           <div className="scrape-form">
@@ -147,7 +172,7 @@ export default function Home() {
               max="20"
               value={queueEnrich}
               onChange={(e) => setQueueEnrich(e.target.value)}
-              title="Enrich top N via Chrome debug"
+              title="Enrich via Chrome local — só funciona rodando npm run watcher no PC, não em produção"
               className="narrow"
             />
             <button className="btn" onClick={onQueue} disabled={queueBusy}>
